@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="App">
+    <Position X="0.5" Y="0.75" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AASIAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>App.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="wnd" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Graphics">
+    <Position X="6.5" Y="5" Width="3.75" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="Graphics::Exception" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Graphics.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Graphics::HrException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Graphics.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Graphics::InfoException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Graphics.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Graphics::DeviceRemovedException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Graphics.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAICACAAEAACAAEAggAAABAE=</HashCode>
+      <FileName>Graphics.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Window">
+    <Position X="2.5" Y="5" Width="3" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="Window::Exception" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Window.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Window::HrException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Window.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Window::NoGfxException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Window.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Window::WindowClass">
+        <TypeIdentifier>
+          <NewMemberFileName>Window.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAQCEgAAABAYAQAAAIEAAAQAEAAAAAAAgCAAAAAA=</HashCode>
+      <FileName>Window.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

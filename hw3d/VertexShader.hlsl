@@ -1,13 +1,13 @@
 // Simple pass-through vertex shader
 struct VSInput
 {
-    float3 pos : POSITION;
+    float3 pos : Position;
     float3 col : COLOR;
 };
 
 struct PSInput
 {
-    float4 pos : SV_POSITION;
+    float4 pos : SV_POSITION; //system value
     float3 col : COLOR;
 };
 

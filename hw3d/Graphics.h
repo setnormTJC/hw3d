@@ -53,12 +53,23 @@ public:
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue) noexcept;
 	void DrawTestTriangle();
+
 private:
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif
-	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
+	/*A connection to the GPU. A "factory" that creates "resources": 
+	1) buffers
+	2) textures
+	3) shaders*/
+	Microsoft::WRL::ComPtr<ID3D11Device> pDevice; 
+
+	/*Shows painting to user*/
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
+
+	/*A "conductor" that issues draw calls - uses resources created by pDevice*/
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
+	
+	/*A canvas on which the GPU paints*/
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
 };

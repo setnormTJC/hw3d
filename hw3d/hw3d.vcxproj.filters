@@ -16,6 +16,9 @@
     <Filter Include="DX_INL_FILETYPES">
       <UniqueIdentifier>{4152ede9-37ef-4f84-8a0e-29914237691f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{22c22f66-48d9-40f6-a1e0-2e34ca1beac7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -100,13 +103,14 @@
     <None Include="DXTrace.inl">
       <Filter>DX_INL_FILETYPES</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="VertexShader.hlsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

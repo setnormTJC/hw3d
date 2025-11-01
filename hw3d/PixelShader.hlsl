@@ -6,5 +6,7 @@ struct PSInput
 
 float4 main(PSInput input) : SV_Target
 {
-    return float4(input.col, 1.0f);
+    //return float4(input.col, 1.0f);
+    
+    return float4(1.0f, 1.0f, 1.0f, 1.0f); //white triangle
 }

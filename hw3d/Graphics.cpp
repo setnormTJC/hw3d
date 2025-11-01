@@ -117,6 +117,11 @@ void Graphics::DrawTestTriangle()
 		{ 0.0f,0.5f,1.0f,0.0f,0.0f },
 		{ 0.5f,-0.5f,0.0f,1.0f,0.0f },
 		{ -0.5f,-0.5f,0.0f,0.0f,1.0f },
+
+		// Second triangle (completely separate)
+		//{ 0.6f, 0.6f, 0.5f, 0.5f, 0.0f },    // top-right-ish
+		//{ 1.0f, 0.0f, 0.0f, 1.0f, 1.0f },    // bottom-right
+		//{ 0.2f, 0.0f, 0.0f, 1.0f, 0.5f },    // bottom-left
 	};
 	wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
 	D3D11_BUFFER_DESC bd = {};
