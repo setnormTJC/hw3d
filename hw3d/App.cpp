@@ -22,10 +22,14 @@ int App::Go()
 
 void App::DoFrame()
 {
+	static int frameCount = 0; 
+
 	const float c = sin(timer.Peek()) / 2.0f + 0.5f; //varies clear (bgrd) color with time (for funsies) 
 	wnd.Gfx().ClearBuffer(c, c, 1.0f);
 	//wnd.Gfx().ClearBuffer(1.0f, c, 0.0f); //determines bgrd (clear) color 
 
 	wnd.Gfx().DrawTestTriangle();
 	wnd.Gfx().EndFrame();
+
+	frameCount++; 
 }

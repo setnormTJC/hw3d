@@ -137,6 +137,7 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowsMessageMap.h" />
   </ItemGroup>
@@ -190,11 +191,10 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="bitmap1.bmp" />
-    <Image Include="chili.ico" />
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="hw3d.rc" />
+    <Image Include="..\myIcon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -29,7 +29,7 @@ Graphics::Graphics(HWND hWnd)
 {
 	DXGI_SWAP_CHAIN_DESC sd = {};
 	sd.BufferDesc.Width = 0;
-	sd.BufferDesc.Height = 0;
+	sd.BufferDesc.Height = 0; //?
 	sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	sd.BufferDesc.RefreshRate.Numerator = 0;
 	sd.BufferDesc.RefreshRate.Denominator = 0;
@@ -67,6 +67,7 @@ Graphics::Graphics(HWND hWnd)
 		nullptr,
 		&pContext
 	));
+
 	// gain access to texture subresource in swap chain (back buffer)
 	wrl::ComPtr<ID3D11Resource> pBackBuffer;
 	GFX_THROW_INFO(pSwap->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer));
@@ -106,6 +107,7 @@ void Graphics::DrawTestTriangle()
 	{
 		float x;
 		float y;
+
 		float r;
 		float g;
 		float b;
@@ -114,16 +116,20 @@ void Graphics::DrawTestTriangle()
 	// create vertex buffer (1 2d triangle at center of screen)
 	const Vertex vertices[] =
 	{
-		{ 0.0f,0.5f,1.0f,0.0f,0.0f },
+		{ 0.0f,0.5f,1.0f,0.0f,0.0f }, //x, y, r, g, b
 		{ 0.5f,-0.5f,0.0f,1.0f,0.0f },
-		{ -0.5f,-0.5f,0.0f,0.0f,1.0f },
+		{ -0.5f,-0.5f,0.0f,0.0f,1.0f},
+		/*BEWARE! triangles with a different winding order to the above will get CULLED!*/
 
 		// Second triangle (completely separate)
-		//{ 0.6f, 0.6f, 0.5f, 0.5f, 0.0f },    // top-right-ish
-		//{ 1.0f, 0.0f, 0.0f, 1.0f, 1.0f },    // bottom-right
-		//{ 0.2f, 0.0f, 0.0f, 1.0f, 0.5f },    // bottom-left
+		{ 0.6f, 0.6f, 0.5f, 0.5f, 0.0f },    // top-right-ish
+		{ 0.8f, 0.0f, 0.0f, 1.0f, 1.0f },    // bottom-right
+		{ 0.3f, 0.0f, 0.0f, 1.0f, 0.5f },    // bottom-left
 	};
+
+
 	wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
+
 	D3D11_BUFFER_DESC bd = {};
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bd.Usage = D3D11_USAGE_DEFAULT;
@@ -131,6 +137,7 @@ void Graphics::DrawTestTriangle()
 	bd.MiscFlags = 0u;
 	bd.ByteWidth = sizeof(vertices);
 	bd.StructureByteStride = sizeof(Vertex);
+
 	D3D11_SUBRESOURCE_DATA sd = {};
 	sd.pSysMem = vertices;
 	GFX_THROW_INFO(pDevice->CreateBuffer(&bd, &sd, &pVertexBuffer));
@@ -139,7 +146,6 @@ void Graphics::DrawTestTriangle()
 	const UINT stride = sizeof(Vertex);
 	const UINT offset = 0u;
 	pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
-
 
 	// create pixel shader
 	wrl::ComPtr<ID3D11PixelShader> pPixelShader;
@@ -154,7 +160,7 @@ void Graphics::DrawTestTriangle()
 
 	// create vertex shader
 	wrl::ComPtr<ID3D11VertexShader> pVertexShader;
-	GFX_THROW_INFO(D3DReadFileToBlob(L"VertexShader.cso", &pBlob));
+	GFX_THROW_INFO(D3DReadFileToBlob(L"VertexShader.cso", &pBlob)); //overwrites previous contents of pBlob (the pixel shader)
 	GFX_THROW_INFO(pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader));
 
 	// bind vertex shader
@@ -166,8 +172,19 @@ void Graphics::DrawTestTriangle()
 	const D3D11_INPUT_ELEMENT_DESC ied[] =
 	{
 		{ "Position",0,DXGI_FORMAT_R32G32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
-		{ "Color",0,DXGI_FORMAT_R32G32B32_FLOAT,0,8u,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		//{ "Color",0,DXGI_FORMAT_R32G32B32_FLOAT,0,8u,D3D11_INPUT_PER_VERTEX_DATA,0 }
+		{ "Color",0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D11_APPEND_ALIGNED_ELEMENT,D3D11_INPUT_PER_VERTEX_DATA,0 }
+		//the macro there is automatic offsetting - more convenient 
 	};
+
+	//LPCSTR SemanticName;
+	//UINT SemanticIndex;
+	//DXGI_FORMAT Format;
+	//UINT InputSlot;
+	//UINT AlignedByteOffset;
+	//D3D11_INPUT_CLASSIFICATION InputSlotClass;
+	//UINT InstanceDataStepRate;
+
 	GFX_THROW_INFO(pDevice->CreateInputLayout(
 		ied, (UINT)std::size(ied),
 		pBlob->GetBufferPointer(),
@@ -180,12 +197,21 @@ void Graphics::DrawTestTriangle()
 
 
 	// bind render target
-	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
+	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr); //OM means "output merger" stage 
 
 
 	// Set primitive topology to triangle list (groups of 3 vertices)
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
+	//pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	//pContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)2); //linelist (note the enum cast) 
+	//pContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)3); //line strip
+	//pContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)5);
+	//pContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)6); //triangle fan NOT supported!
+	//D3D_PRIMITIVE_TOPOLOGY_LINELIST = 2,
+		//D3D_PRIMITIVE_TOPOLOGY_LINESTRIP = 3,
+		//D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST = 4,
+		//D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP = 5,
+		//D3D_PRIMITIVE_TOPOLOGY_TRIANGLEFAN = 6,
 
 	// configure viewport
 	D3D11_VIEWPORT vp;
@@ -195,7 +221,7 @@ void Graphics::DrawTestTriangle()
 	vp.MaxDepth = 1;
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
-	pContext->RSSetViewports(1u, &vp);
+	pContext->RSSetViewports(1u, &vp); //RS is rasterizer" stage 
 
 
 	GFX_THROW_INFO_ONLY(pContext->Draw((UINT)std::size(vertices), 0u));
