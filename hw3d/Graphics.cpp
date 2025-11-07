@@ -99,7 +99,7 @@ void Graphics::ClearBuffer(float red, float green, float blue) noexcept
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
 }
 
-void Graphics::DrawTestTriangle()
+void Graphics::DrawTestTriangle(float angle)
 {
 	HRESULT hr;
 
@@ -147,6 +147,47 @@ void Graphics::DrawTestTriangle()
 	const UINT offset = 0u;
 	pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
 
+	//create constant buffer for transformation matrix: 
+	struct ConstantBuffer
+	{
+		struct
+		{
+			float element[4][4];
+
+		} transformation; 
+	};
+
+	/*NOTE: CPU and GPU differ in row-major versus column-major storage*/
+	const ConstantBuffer cb =
+	{
+		{
+			std::cos(angle),	std::sin(angle),	0.0f,	0.0f, 
+			-std::sin(angle),	std::cos(angle),	0.0f,	0.0f, 
+			0.0f,				0.0f,				1.0f,	0.0f,
+			0.0f,				0.0f,				0.0f,	1.0f
+		}
+	};
+
+
+	//creat a buffer similar to vertex buffer to hold transformation matrix: 
+	wrl::ComPtr<ID3D11Buffer> pConstantBuffer; 
+	D3D11_BUFFER_DESC cbd; 
+	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbd.Usage = D3D11_USAGE_DYNAMIC;
+	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cbd.MiscFlags = 0u; 
+	cbd.ByteWidth = sizeof(cb); 
+	cbd.StructureByteStride = 0u; 
+
+	D3D11_SUBRESOURCE_DATA csd = {}; 
+	csd.pSysMem = &cb; 
+	GFX_THROW_INFO(pDevice->CreateBuffer(&cbd, &csd, &pConstantBuffer));
+
+	//bind constant buffer to vertex shader:
+	
+	//bind matrix to vertex shader: 
+	pContext->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
+
 	// create pixel shader
 	wrl::ComPtr<ID3D11PixelShader> pPixelShader;
 	wrl::ComPtr<ID3DBlob> pBlob;
@@ -169,6 +210,7 @@ void Graphics::DrawTestTriangle()
 
 	// input (vertex) layout (2d position only)
 	wrl::ComPtr<ID3D11InputLayout> pInputLayout;
+	
 	const D3D11_INPUT_ELEMENT_DESC ied[] =
 	{
 		{ "Position",0,DXGI_FORMAT_R32G32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },

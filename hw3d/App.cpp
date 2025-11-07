@@ -28,7 +28,7 @@ void App::DoFrame()
 	wnd.Gfx().ClearBuffer(c, c, 1.0f);
 	//wnd.Gfx().ClearBuffer(1.0f, c, 0.0f); //determines bgrd (clear) color 
 
-	wnd.Gfx().DrawTestTriangle();
+	wnd.Gfx().DrawTestTriangle(sin(timer.Peek()));
 	wnd.Gfx().EndFrame();
 
 	frameCount++; 

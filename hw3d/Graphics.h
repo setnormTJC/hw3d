@@ -52,7 +52,7 @@ public:
 	~Graphics() = default;
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue) noexcept;
-	void DrawTestTriangle();
+	void DrawTestTriangle(float angle);
 
 private:
 #ifndef NDEBUG
@@ -67,7 +67,10 @@ private:
 	/*Shows painting to user*/
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
 
-	/*A "conductor" that issues draw calls - uses resources created by pDevice*/
+	/*A "conductor". Sets vertex and pixel shaders. 
+	* Sets primitive topology(points, lines, triangles)
+	Sets layout of vertices (x, y, z, rgb, uv).
+	Issues draw calls - uses resources created by pDevice*/
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 	
 	/*A canvas on which the GPU paints*/
