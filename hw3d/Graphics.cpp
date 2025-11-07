@@ -2,8 +2,11 @@
 #include "dxerr.h"
 #include <sstream>
 #include <d3dcompiler.h>
+#include<cmath>
+#include<DirectXMath.h>
 
 namespace wrl = Microsoft::WRL;
+namespace dx = DirectX; 
 
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
@@ -99,12 +102,16 @@ void Graphics::ClearBuffer(float red, float green, float blue) noexcept
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
 }
 
-void Graphics::DrawTestTriangle(float angle)
+void Graphics::DrawTestTriangle(float angle, float x, float y)
 {
+	//dx::XMVECTOR v = dx::XMVectorSet(3.0f, 3.0f, 0.0f, 0.0f); 
+	//auto dotproduct = dx::XMVector4Dot(v, v);
+	//auto xx = dx::XMVectorGetX(dotproduct); 
+
 	HRESULT hr;
 
 	struct Vertex
-	{
+	{ 
 		float x;
 		float y;
 
@@ -148,23 +155,22 @@ void Graphics::DrawTestTriangle(float angle)
 	pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
 
 	//create constant buffer for transformation matrix: 
+	
+	
 	struct ConstantBuffer
 	{
-		struct
-		{
-			float element[4][4];
-
-		} transformation; 
+		dx::XMMATRIX transform; //4 by 4 floating point matrix 
 	};
 
 	/*NOTE: CPU and GPU differ in row-major versus column-major storage*/
 	const ConstantBuffer cb =
 	{
 		{
-			std::cos(angle),	std::sin(angle),	0.0f,	0.0f, 
-			-std::sin(angle),	std::cos(angle),	0.0f,	0.0f, 
-			0.0f,				0.0f,				1.0f,	0.0f,
-			0.0f,				0.0f,				0.0f,	1.0f
+			dx::XMMatrixTranspose(
+				dx::XMMatrixRotationZ(angle) * 
+				dx::XMMatrixScaling(3.0f/4.0f, 1.0f, 1.0f) * 
+				dx::XMMatrixTranslation(x, y, 0.0f)
+			)
 		}
 	};
 

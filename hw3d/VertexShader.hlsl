@@ -7,7 +7,7 @@ struct VSInput
 
 cbuffer CBuf //cbuffer (constant buffer) is a keyword in HLSL
 {
-    row_major matrix tranform; //matrix in HLSL means 4 by 4 
+    matrix tranform; //matrix in HLSL means 4 by 4 AND column major 
 };
 
 struct VSOut //pixel shader input 

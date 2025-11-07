@@ -28,7 +28,11 @@ void App::DoFrame()
 	wnd.Gfx().ClearBuffer(c, c, 1.0f);
 	//wnd.Gfx().ClearBuffer(1.0f, c, 0.0f); //determines bgrd (clear) color 
 
-	wnd.Gfx().DrawTestTriangle(sin(timer.Peek()));
+
+	float mouseX = wnd.mouse.GetPosX() / 400.0f - 1.0f; 
+	float mouseY = -1.0f*wnd.mouse.GetPosY() / 300.0f + 1.0f;
+
+	wnd.Gfx().DrawTestTriangle(sin(timer.Peek()), mouseX, mouseY);
 	wnd.Gfx().EndFrame();
 
 	frameCount++; 
