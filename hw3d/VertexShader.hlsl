@@ -1,8 +1,8 @@
 // Simple pass-through vertex shader
 struct VSInput
 {
-    float2 pos : Position;
-    float3 col : Color;
+    float3 pos : Position;
+    //float3 col : Color;
 };
 
 cbuffer CBuf //cbuffer (constant buffer) is a keyword in HLSL
@@ -13,14 +13,14 @@ cbuffer CBuf //cbuffer (constant buffer) is a keyword in HLSL
 struct VSOut //pixel shader input 
 {
     float4 pos : SV_Position; //system value
-    float3 col : COLOR;
+    //float3 col : COLOR;
 };
 
 VSOut main(VSInput input)
 {
     VSOut output;
-    output.pos = mul(float4(input.pos, 1.0f, 1.0f), tranform);
-    output.col = input.col;
+    output.pos = mul(float4(input.pos, 1.0f), tranform);
+    //output.col = input.col;
     
     return output;
 }

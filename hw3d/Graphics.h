@@ -52,27 +52,37 @@ public:
 	~Graphics() = default;
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue) noexcept;
-	void DrawTestTriangle(float angle, float x, float y);
+	void DrawTestTriangle(float angle, float x, float z);
 
 private:
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif
-	/*A connection to the GPU. A "factory" that creates "resources": 
+	/*A connection to the GPU. A "factory" that creates "resources"- or a workshop that builds tools - such as: 
 	1) buffers
 	2) textures
-	3) shaders*/
+	3) shaders
+	pDevice functions OFTEN begin with "Create..." and they return HRESULTs
+	*/
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice; 
 
 	/*Shows painting to user*/
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
 
-	/*A "conductor". Sets vertex and pixel shaders. 
-	* Sets primitive topology(points, lines, triangles)
+	/*A "conductor". The worker who uses tools built by pDevice (the GPU)
+	Note that D3D12 and Vulkan allow "deferred" context - multithreaded draw commands
+	Sets vertex and pixel shaders. 
+	Sets primitive topology(points, lines, triangles)
 	Sets layout of vertices (x, y, z, rgb, uv).
-	Issues draw calls - uses resources created by pDevice*/
+	Issues draw calls - uses resources created by pDevice
+	Function names OFTEN include "Set" AND begin with an acronym of pipeline stage 
+	Ex: VS -> vertex shader, RS -> rasterizer stage, OM -> output merger 
+	*/
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 	
 	/*A canvas on which the GPU paints*/
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
+
+	/*depth-stencil view - only used in Graphics constructor (as of Nov 7, 2025 commit)*/
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV; 
 };
