@@ -7,7 +7,7 @@ struct PSInput
 cbuffer CBuf //cbuffer (constant buffer) is a keyword in HLSL
 {
     //matrix tranform; //matrix in HLSL means 4 by 4 AND column major 
-    float4 face_colors[6]; 
+    float4 face_colors[6]; //relates to the "semantic" SV_PrimitiveID below
 };
 
 float4 main(uint triangleID : SV_PrimitiveID) : SV_Target

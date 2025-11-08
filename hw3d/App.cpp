@@ -4,6 +4,22 @@ App::App()
 	:
 	wnd(800, 600, "The Donkey Fart Box")
 {
+
+	std::mt19937 rng(std::random_device{}());
+	std::uniform_real_distribution<float> adist(0.0f, 3.1415f * 2.0f);
+	std::uniform_real_distribution<float> ddist(0.0f, 3.1415f * 2.0f);
+	std::uniform_real_distribution<float> odist(0.0f, 3.1415f * 0.3f);
+	std::uniform_real_distribution<float> rdist(6.0f, 20.0f);
+
+
+	for (auto i = 0; i < 80; ++i)
+	{
+		boxes.push_back(std::make_unique<Box>(
+			wnd.Gfx(), rng, adist, ddist, odist, rdist
+		));
+	}
+
+	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
 }
 
 int App::Go()
@@ -20,21 +36,24 @@ int App::Go()
 	}
 }
 
+App::~App()
+{
+}
+
 void App::DoFrame()
 {
 	static int frameCount = 0; 
 
-	const float c = sin(timer.Peek()) / 2.0f + 0.5f; //varies clear (bgrd) color with time (for funsies) 
-	wnd.Gfx().ClearBuffer(c, c, 1.0f);
-	//wnd.Gfx().ClearBuffer(1.0f, c, 0.0f); //determines bgrd (clear) color 
+	auto dt = timer.Mark(); 
 
+	wnd.Gfx().ClearBuffer(0.0f, 0.0f, 0.0f);
 
-	float mouseX = wnd.mouse.GetPosX() / 400.0f - 1.0f; 
-	float mouseY = -1.0f*wnd.mouse.GetPosY() / 300.0f + 1.0f;
+	for (auto& b : boxes)
+	{
+		b->Update(dt); 
+		b->Draw(wnd.Gfx());
+	}
 
-	wnd.Gfx().DrawTestTriangle(timer.Peek(), 0.0f, 0.0f);
-	/*Draw a SECOND cube whose location is mouse-dependent:*/
-	wnd.Gfx().DrawTestTriangle(timer.Peek(), mouseX, mouseY);
 	wnd.Gfx().EndFrame();
 
 	frameCount++; 

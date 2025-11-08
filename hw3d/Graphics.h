@@ -1,13 +1,22 @@
 #pragma once
+
+//#include"Bindable.h"
 #include "ChiliWin.h"
 #include "ChiliException.h"
+#include <d3dcompiler.h>
 #include <d3d11.h>
 #include <wrl.h>
 #include <vector>
 #include "DxgiInfoManager.h"
 
+#include<DirectXMath.h>
+
+class Bindable; //forward declaration for friendship without #including (circular dependency)
+
 class Graphics
 {
+	friend class Bindable; 
+
 public:
 	class Exception : public ChiliException
 	{
@@ -52,7 +61,11 @@ public:
 	~Graphics() = default;
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue) noexcept;
-	void DrawTestTriangle(float angle, float x, float z);
+
+	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
+	
+	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
+	DirectX::XMMATRIX GetProjection() const noexcept;
 
 private:
 #ifndef NDEBUG
@@ -85,4 +98,7 @@ private:
 
 	/*depth-stencil view - only used in Graphics constructor (as of Nov 7, 2025 commit)*/
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV; 
+
+	DirectX::XMMATRIX projection;
+
 };
