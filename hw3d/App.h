@@ -6,6 +6,9 @@
 #include<vector> 
 
 #include"Box.h"
+#include"Cube.h"
+#include"SkinnedBox.h"
+#include"Sheet.h"
 
 class App
 {
@@ -19,6 +22,9 @@ private:
 private:
 	Window wnd;
 	ChiliTimer timer;
-	std::vector<std::unique_ptr<class Box>> boxes; 
+	std::vector<std::unique_ptr<class Box>> boxes; //app is composed of stuff to draw
+	std::vector < std::unique_ptr<class SkinnedBox>> skinnedBoxes; 
+
+	std::vector < std::unique_ptr<class Sheet>> sheets; 
 
 };

@@ -6,7 +6,12 @@
 
 void Drawable::Draw(Graphics& gfx) const noexcept(!IS_DEBUG)
 {
-	for (auto& b : binds)
+	for (auto& b : binds) //instance binds
+	{
+		b->Bind(gfx); 
+	}
+
+	for (auto& b : GetStaticBinds())
 	{
 		b->Bind(gfx); 
 	}

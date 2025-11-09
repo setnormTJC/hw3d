@@ -144,6 +144,8 @@ void Graphics::ClearBuffer(float red, float green, float blue) noexcept
 void Graphics::DrawIndexed(UINT count) noexcept(!IS_DEBUG)
 {
 	GFX_THROW_INFO_ONLY(pContext->DrawIndexed(count, 0u, 0u));
+
+	//pContext->DrawIndexed(count, 0u, 0u)
 }
 
 void Graphics::SetProjection(DirectX::FXMMATRIX proj) noexcept
@@ -156,7 +158,7 @@ DirectX::XMMATRIX Graphics::GetProjection() const noexcept
 	return projection; 
 }
 
-
+#pragma region Exception stuff
 
 // Graphics exception stuff
 Graphics::HrException::HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs) noexcept
@@ -263,3 +265,5 @@ std::string Graphics::InfoException::GetErrorInfo() const noexcept
 {
 	return info;
 }
+
+#pragma endregion

@@ -12,6 +12,7 @@ VertexShader::VertexShader(Graphics& gfx, const std::wstring& path)
 		pBytecodeBlob->GetBufferSize(), 
 		nullptr, 
 		&pVertexShader));
+
 }
 
 void VertexShader::Bind(Graphics& gfx) noexcept

@@ -1,6 +1,7 @@
 #pragma once
 #include "Graphics.h"
 
+/*Children of Bindable get bound to graphics pipeline*/
 class Bindable
 {
 public: 

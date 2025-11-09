@@ -3,14 +3,15 @@
 #include"ConstantBuffers.h"
 #include"Drawable.h"
 #include<DirectXMath.h>
+#include<memory> 
 
-class TransformCBuf : public Bindable
+class TransformCbuf : public Bindable
 {
 public: 
-	TransformCBuf(Graphics& gfx, const Drawable& parent); 
+	TransformCbuf(Graphics& gfx, const Drawable& parent); 
 	void Bind(Graphics& gfx) noexcept override; 
 private: 
-	VertexConstantBuffer<DirectX::XMMATRIX> vcbuf; 
+	static std::unique_ptr<VertexConstantBuffer<DirectX::XMMATRIX>> pVcbuf; 
 	const Drawable& parent; //fancy design here
 };
 

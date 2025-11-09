@@ -1,16 +1,19 @@
-#include "TransformCBuf.h"
+#include "TransformCbuf.h"
 
-TransformCBuf::TransformCBuf(Graphics& gfx, const Drawable& parent)
+TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent)
 	:
-	vcbuf(gfx),
 	parent(parent)
 {
+    if (!pVcbuf)
+    {
+        pVcbuf = std::make_unique<VertexConstantBuffer<DirectX::XMMATRIX>>(gfx); 
+    }
 }
 
-void TransformCBuf::Bind(Graphics& gfx) noexcept
+void TransformCbuf::Bind(Graphics& gfx) noexcept
 {
 
-    vcbuf.Update(gfx,
+    pVcbuf->Update(gfx,
         DirectX::XMMatrixTranspose(
             parent.GetTransformXM() * gfx.GetProjection()
         )
@@ -20,5 +23,8 @@ void TransformCBuf::Bind(Graphics& gfx) noexcept
     //        parent.GetTransformXM() * XMLoadFloat4x4(&gfx.GetProjection()) //differs from CHili approach!
     //    ));
     //
-    vcbuf.Bind(gfx);
+    pVcbuf->Bind(gfx);
 }
+
+//define the static member var: 
+std::unique_ptr<VertexConstantBuffer<DirectX::XMMATRIX>> TransformCbuf::pVcbuf;
