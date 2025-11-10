@@ -1,8 +1,6 @@
 #pragma once
 
-
 #include"Bindable.h"
-#include"Graphics.h"
 
 class Sampler : public Bindable
 {

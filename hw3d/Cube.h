@@ -72,6 +72,9 @@ public:
 		vertices[13].pos = { side,-side,side };
 		vertices[13].tex = { 0.0f / 3.0f,2.0f / 4.0f };
 
+		//duplicated vertices required if "unwrapping" 
+		// a 3D object which has shared vertices among the faces 
+
 		return{
 			std::move(vertices),{
 				0,2,1,   2,3,1,

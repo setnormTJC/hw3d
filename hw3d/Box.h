@@ -8,10 +8,11 @@ class Box : public DrawableBase<Box> //interesting template param!
 public: 
 
 	Box(Graphics& gfx, std::mt19937& rng,
-		std::uniform_real_distribution<float>& adist,
-		std::uniform_real_distribution<float>& ddist,
-		std::uniform_real_distribution<float>& odist,
-		std::uniform_real_distribution<float>& rdist);
+		std::uniform_real_distribution<float>& adist, //angle
+		std::uniform_real_distribution<float>& ddist, //delta? (how fast change in mvmt occurs?)
+		std::uniform_real_distribution<float>& odist, //origin(al position)
+		std::uniform_real_distribution<float>& rdist, //radius (box size scaling, perhaps)
+		std::uniform_real_distribution<float>& bdist); //brightness? possibly
 
 	void Update(float dt) noexcept override; 
 	
@@ -34,5 +35,8 @@ private:
 	float dtheta;
 	float dphi;
 	float dchi;
+
+	//model tranform
+	DirectX::XMFLOAT3X3 mt;
 };
 

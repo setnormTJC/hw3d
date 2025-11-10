@@ -5,10 +5,7 @@
 #include<memory>
 #include<vector> 
 
-#include"Box.h"
-#include"Cube.h"
-#include"SkinnedBox.h"
-#include"Sheet.h"
+#include"Drawable.h"
 
 class App
 {
@@ -22,9 +19,8 @@ private:
 private:
 	Window wnd;
 	ChiliTimer timer;
-	std::vector<std::unique_ptr<class Box>> boxes; //app is composed of stuff to draw
-	std::vector < std::unique_ptr<class SkinnedBox>> skinnedBoxes; 
-
-	std::vector < std::unique_ptr<class Sheet>> sheets; 
+	std::vector<std::unique_ptr<Drawable>> drawables; 
+	static constexpr size_t nDrawables = 100; 
+	
 
 };

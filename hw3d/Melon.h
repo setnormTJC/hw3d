@@ -1,21 +1,21 @@
 #pragma once
 
-#pragma once
-#include "DrawableBase.h"
+#include"DrawableBase.h"
+#include"Graphics.h"
 
 #include<random> 
 
-class SkinnedBox : public DrawableBase<SkinnedBox>
+class Melon : public DrawableBase<Melon>
 {
 public:
-	SkinnedBox(Graphics& gfx, std::mt19937& rng,
+	Melon(Graphics& gfx, std::mt19937& rng,
 		std::uniform_real_distribution<float>& adist,
 		std::uniform_real_distribution<float>& ddist,
 		std::uniform_real_distribution<float>& odist,
-		std::uniform_real_distribution<float>& rdist);
-	
+		std::uniform_real_distribution<float>& rdist,
+		std::uniform_int_distribution<int>& longdist,
+		std::uniform_int_distribution<int>& latdist);
 	void Update(float dt) noexcept override;
-
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 private:
 	// positional

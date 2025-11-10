@@ -12,7 +12,7 @@ Texture::Texture(Graphics& gfx, const Surface& s)
 	textureDesc.Height = s.GetHeight(); 
 	textureDesc.MipLevels = 1; 
 	textureDesc.ArraySize = 1; 
-	textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM; //bgr not rgb...
 	textureDesc.SampleDesc.Count = 1; 
 	textureDesc.SampleDesc.Quality = 0; //no antialiasing
 	textureDesc.Usage = D3D11_USAGE_DEFAULT; 

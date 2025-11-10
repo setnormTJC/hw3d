@@ -44,8 +44,7 @@ Sheet::Sheet(Graphics& gfx,
 		model.vertices[2].tex = { 0.0f, 1.0f };
 		model.vertices[3].tex = { 1.0f, 1.0f };
 
-		auto s = Surface::FromFile("Images//kappa50.png");
-		AddStaticBind(std::make_unique<Texture>(gfx, s));
+		AddStaticBind(std::make_unique<Texture>(gfx, Surface::FromFile("Images//ramona.png")));
 
 		AddStaticBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
 
@@ -65,6 +64,7 @@ Sheet::Sheet(Graphics& gfx,
 		{
 			{ "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
 			{ "TexCoord",0,DXGI_FORMAT_R32G32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0 },
+			//NOTE that "TexCoord" here MUST match the "semantic" that is in the pixel shader!
 		};
 
 		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
@@ -81,54 +81,21 @@ Sheet::Sheet(Graphics& gfx,
 }
 
 void Sheet::Update(float dt) noexcept
-
-
 {
-
-
 	roll += droll * dt;
-
-
 	pitch += dpitch * dt;
-
-
 	yaw += dyaw * dt;
-
-
 	theta += dtheta * dt;
-
-
 	phi += dphi * dt;
-
-
 	chi += dchi * dt;
-
-
 }
 
-
-
-
-
 DirectX::XMMATRIX Sheet::GetTransformXM() const noexcept
-
-
 {
-
-
 	namespace dx = DirectX;
 
-
 	return dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
-
-
 		dx::XMMatrixTranslation(r, 0.0f, 0.0f) *
-
-
 		dx::XMMatrixRotationRollPitchYaw(theta, phi, chi) *
-
-
 		dx::XMMatrixTranslation(0.0f, 0.0f, 20.0f);
-
-
 }

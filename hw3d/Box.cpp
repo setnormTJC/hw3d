@@ -9,7 +9,8 @@ Box::Box(Graphics& gfx,
 	std::uniform_real_distribution<float>& adist,
 	std::uniform_real_distribution<float>& ddist,
 	std::uniform_real_distribution<float>& odist,
-	std::uniform_real_distribution<float>& rdist)
+	std::uniform_real_distribution<float>& rdist, 
+	std::uniform_real_distribution<float>& bdist)
 	:
 	r(rdist(rng)),
 	droll(ddist(rng)),
@@ -35,25 +36,21 @@ Box::Box(Graphics& gfx,
 
 		auto model = Cube::Make<Vertex>(); 
 
-		model.Transform(dx::XMMatrixScaling(1.0f, 1.0f, 1.2f));
-
+		//model.Transform(dx::XMMatrixScaling(1.0f, 1.0f, 1.2f));
 
 		AddStaticBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
 
-		auto pvs = std::make_unique<VertexShader>(gfx, L"../x64/Debug/VertexShader.cso");
+		auto pvs = std::make_unique<VertexShader>(gfx, L"../x64/Debug/ColorIndexVS.cso");
 		//working directory is the folder that contains this cpp file (step up one, then into x64, etc.)
 		auto pvsbc = pvs->GetBytecode(); //used by InputLayout below
 
 		AddStaticBind(std::move(pvs));
 
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"../x64/Debug/PixelShader.cso"));
+		AddStaticBind(std::make_unique<PixelShader>(gfx, L"../x64/Debug/ColorIndexPS.cso"));
 
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
 
-
-		/*for setting solid face colors*/
-
-		struct ConstantBuffer2
+		struct PixelShaderConstants
 		{
 			struct
 			{
@@ -61,22 +58,23 @@ Box::Box(Graphics& gfx,
 				float g;
 				float b;
 				float a;
-			} face_colors[6];
+			} face_colors[8];
 		};
-
-		const ConstantBuffer2 cb2 =
+		const PixelShaderConstants cb2 =
 		{
 			{
-				{ 1.0f,0.0f,1.0f },
+				{ 1.0f,1.0f,1.0f },
 				{ 1.0f,0.0f,0.0f },
 				{ 0.0f,1.0f,0.0f },
-				{ 0.0f,0.0f,1.0f },
 				{ 1.0f,1.0f,0.0f },
+				{ 0.0f,0.0f,1.0f },
+				{ 1.0f,0.0f,1.0f },
 				{ 0.0f,1.0f,1.0f },
+				{ 0.0f,0.0f,0.0f },
 			}
 		};
 
-		AddStaticBind(std::make_unique<PixelConstantBuffer<ConstantBuffer2>>(gfx, cb2)); //gets hairy here!
+		AddStaticBind(std::make_unique<PixelConstantBuffer<PixelShaderConstants>>(gfx, cb2)); //gets hairy here!
 
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
 		{
@@ -96,6 +94,12 @@ Box::Box(Graphics& gfx,
 	}
 
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this)); //NON-static
+
+	// model deformation transform (per instance, not stored as bind)
+	dx::XMStoreFloat3x3(
+		&mt,
+		dx::XMMatrixScaling(1.0f, 1.0f, bdist(rng))
+	);
 }
 
 void Box::Update(float dt) noexcept
@@ -114,8 +118,10 @@ void Box::Update(float dt) noexcept
 
 DirectX::XMMATRIX Box::GetTransformXM() const noexcept
 {
-	return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
-		DirectX::XMMatrixTranslation(r, 0.0f, 0.0f) *
-		DirectX::XMMatrixRotationRollPitchYaw(theta, phi, chi) *
-		DirectX::XMMatrixTranslation(0.0f, 0.0f, 20.0f);
+	namespace dx = DirectX;
+	return dx::XMLoadFloat3x3(&mt) *
+		dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
+		dx::XMMatrixTranslation(r, 0.0f, 0.0f) *
+		dx::XMMatrixRotationRollPitchYaw(theta, phi, chi) *
+		dx::XMMatrixTranslation(0.0f, 0.0f, 20.0f);
 }

@@ -1,4 +1,7 @@
-#define FULL_WINTARD
+#define FULL_WINTARD //I am important
+
+
+
 #include "ChiliWin.h"
 #include "GDIPlusManager.h"
 #include <algorithm>
