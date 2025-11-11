@@ -1,11 +1,14 @@
 #pragma once
-#include "Window.h"
 #include "ChiliTimer.h"
+#include"Drawable.h"
+#include"ImguiManager.h"
+#include "Window.h"
+
 
 #include<memory>
 #include<vector> 
 
-#include"Drawable.h"
+
 
 class App
 {
@@ -17,6 +20,7 @@ public:
 private:
 	void DoFrame();
 private:
+	ImguiManager imgui; 
 	Window wnd;
 	ChiliTimer timer;
 	std::vector<std::unique_ptr<Drawable>> drawables; 
