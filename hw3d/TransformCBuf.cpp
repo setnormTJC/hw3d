@@ -15,14 +15,11 @@ void TransformCbuf::Bind(Graphics& gfx) noexcept
 
     pVcbuf->Update(gfx,
         DirectX::XMMatrixTranspose(
-            parent.GetTransformXM() * gfx.GetProjection()
+            parent.GetTransformXM() *
+            gfx.GetCamera() *
+            gfx.GetProjection()
         )
     );
-    //vcbuf.Update(gfx,
-    //    XMMatrixTranspose(
-    //        parent.GetTransformXM() * XMLoadFloat4x4(&gfx.GetProjection()) //differs from CHili approach!
-    //    ));
-    //
     pVcbuf->Bind(gfx);
 }
 

@@ -7,17 +7,13 @@
 #include"ChiliMath.h"
 #include"GDIPlusManager.h"
 #include"imgui/imgui.h"
-#include"imgui/imgui_impl_win32.h"
-#include"imgui/imgui_impl_dx11.h"
 #include"Melon.h"
 #include"Sheet.h"
 #include"SkinnedBox.h"
 #include"Surface.h"
 
 
-
 GDIPlusManager gdipm; //GLOBAL var here!
-
 
 
 App::App()
@@ -88,6 +84,9 @@ App::App()
 
 	//hardcoded initial perspective matrix params: 
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
+
+	/*Camera setup*/
+	//wnd.Gfx().SetCamera(DirectX::XMMatrixTranslation(0.0f, 0.0f, 20.0f));
 }
 
 int App::Go()
@@ -108,10 +107,10 @@ void App::DoFrame()
 {
 	static int frameCount = 0;
 
-	auto dt = timer.Mark();
+	auto dt = timer.Mark() * speed_factor;
 
-	
-	wnd.Gfx().ClearBuffer(0.0f, 0.0f, 0.0f); //black bgrd
+	wnd.Gfx().BeginFrame(0.0f, 0.0f, 0.0f); 
+	wnd.Gfx().SetCamera(cam.GetMatrix()); 
 
 	for (auto& d : drawables)
 	{
@@ -119,21 +118,23 @@ void App::DoFrame()
 		d->Draw(wnd.Gfx());
 	}
 
-	frameCount++;
+	static char buffer[1024]; 
 
-	/*ImGui stuff*/
-	ImGui_ImplDX11_NewFrame(); 
-	ImGui_ImplWin32_NewFrame(); 
-	ImGui::NewFrame(); 
-
-	static bool show_demo_window = true; 
-	if (show_demo_window)
+	//control simulation speed with imgui!
+	if (ImGui::Begin("Simulation speed")) //creates a window
 	{
-		ImGui::ShowDemoWindow(&show_demo_window); 
+		ImGui::SliderFloat("Speed factor", &speed_factor, 0.0f, 4.0f);
+		ImGui::Text("App average %.3f ms/frame (%.1f FPS)", 
+			1000.0f/ImGui::GetIO().Framerate, 
+			ImGui::GetIO().Framerate);
+
+		ImGui::InputText("Label", buffer, sizeof(buffer)); 
 	}
-	ImGui::Render(); 
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData()); 
-	/*end ImGui stuff*/
+	ImGui::End(); 
+
+	cam.SpawnControlWindow();
+
+	frameCount++;
 
 	wnd.Gfx().EndFrame();
 

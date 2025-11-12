@@ -59,12 +59,20 @@ public:
 	Graphics(const Graphics&) = delete;
 	Graphics& operator=(const Graphics&) = delete;
 	~Graphics() = default;
+	
+	void BeginFrame(float red, float green, float blue) noexcept; 
 	void EndFrame();
-	void ClearBuffer(float red, float green, float blue) noexcept;
+	void EnableImgui() noexcept; 
+	void DisableImgui() noexcept; 
+	bool IsImguiEnabled() const noexcept; 
 
 	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
-	
 	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
+
+	void SetCamera(DirectX::FXMMATRIX cam) noexcept;
+	DirectX::XMMATRIX GetCamera() const noexcept; 
+
+
 	DirectX::XMMATRIX GetProjection() const noexcept;
 
 private:
@@ -100,5 +108,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV; 
 
 	DirectX::XMMATRIX projection;
+	DirectX::XMMATRIX camera;
+
+
+	bool imguiEnabled = true; 
 
 };
