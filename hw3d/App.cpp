@@ -7,10 +7,10 @@
 #include"ChiliMath.h"
 #include"GDIPlusManager.h"
 #include"imgui/imgui.h"
-#include"Melon.h"
 #include"Sheet.h"
 #include"SkinnedBox.h"
 #include"Surface.h"
+
 
 
 GDIPlusManager gdipm; //GLOBAL var here!
@@ -18,7 +18,8 @@ GDIPlusManager gdipm; //GLOBAL var here!
 
 App::App()
 	:
-	wnd(800, 600, "The Window title")
+	wnd(800, 600, "The Window title"), 
+	light(wnd.Gfx())
 {
 	class Factory
 	{
@@ -30,36 +31,11 @@ App::App()
 
 		std::unique_ptr<Drawable> operator()()
 		{
-			switch (typedist(rng))
-			{
-			case 0:
-				return std::make_unique<Box>(
-					gfx, rng, adist, ddist,
-					odist, rdist, bdist
-				);
+			return std::make_unique<Box>(gfx, rng,
+				adist, ddist,
+				odist, rdist,
+				bdist); 
 
-			case 1: 
-				return std::make_unique<Melon>(
-					gfx, rng, adist, ddist,
-					odist, rdist, longdist, latdist
-				);
-
-			case 2:
-				return std::make_unique<Sheet>(
-					gfx, rng, adist, ddist,
-					odist, rdist
-				);
-
-			case 3: 
-				return std::make_unique<SkinnedBox>(
-					gfx, rng, adist, ddist, 
-					odist, rdist
-				);
-
-			default:
-				assert(false && "bad drawable type in factory");
-				return {};
-			}
 		}
 
 	private: 
@@ -72,10 +48,9 @@ App::App()
 		std::uniform_real_distribution<float> bdist{ 0.4f,3.0f };
 		std::uniform_int_distribution<int> latdist{ 5,20 };
 		std::uniform_int_distribution<int> longdist{ 10,40 };
-		std::uniform_int_distribution<int> typedist{ 0,3 }; // important magic number here!
+		std::uniform_int_distribution<int> typedist{ 0,2 }; // important magic number here!
 
 	};
-	//const auto s = Surface::FromFile("images//kappa50.png");
 
 	Factory f(wnd.Gfx());
 
@@ -85,8 +60,6 @@ App::App()
 	//hardcoded initial perspective matrix params: 
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
 
-	/*Camera setup*/
-	//wnd.Gfx().SetCamera(DirectX::XMMatrixTranslation(0.0f, 0.0f, 20.0f));
 }
 
 int App::Go()
@@ -105,18 +78,20 @@ int App::Go()
 
 void App::DoFrame()
 {
-	static int frameCount = 0;
-
 	auto dt = timer.Mark() * speed_factor;
 
 	wnd.Gfx().BeginFrame(0.0f, 0.0f, 0.0f); 
 	wnd.Gfx().SetCamera(cam.GetMatrix()); 
+
+	light.Bind(wnd.Gfx()); 
 
 	for (auto& d : drawables)
 	{
 		d->Update(wnd.kbd.KeyIsPressed(VK_SPACE) ? 0.0f : dt); //PAUSE if space is pressed
 		d->Draw(wnd.Gfx());
 	}
+
+	light.Draw(wnd.Gfx()); 
 
 	static char buffer[1024]; 
 
@@ -133,8 +108,7 @@ void App::DoFrame()
 	ImGui::End(); 
 
 	cam.SpawnControlWindow();
-
-	frameCount++;
+	light.SpawnControlWindow(); 
 
 	wnd.Gfx().EndFrame();
 

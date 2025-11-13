@@ -70,6 +70,8 @@ public:
 	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
 
 	void SetCamera(DirectX::FXMMATRIX cam) noexcept;
+
+	/*Called by the Bindable TransformCBuf!*/
 	DirectX::XMMATRIX GetCamera() const noexcept; 
 
 

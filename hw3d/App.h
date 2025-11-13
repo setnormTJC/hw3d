@@ -3,6 +3,7 @@
 #include "ChiliTimer.h"
 #include"Drawable.h"
 #include"ImguiManager.h"
+#include"PointLight.h"
 #include "Window.h"
 
 
@@ -31,4 +32,5 @@ private:
 	float speed_factor = 1.0f;
 	
 	Camera cam; 
+	PointLight light; 
 };

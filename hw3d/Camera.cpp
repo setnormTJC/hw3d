@@ -21,6 +21,8 @@ DirectX::XMMATRIX Camera::GetMatrix() const noexcept
 
 void Camera::SpawnControlWindow() noexcept
 {
+
+
 	if (ImGui::Begin("Camera"))
 	{
 		ImGui::Text("Position");

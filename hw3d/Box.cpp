@@ -32,53 +32,36 @@ Box::Box(Graphics& gfx,
 		struct Vertex
 		{
 			dx::XMFLOAT3 pos;
+			dx::XMFLOAT3 n; //normal vector for a particular pos
 		};
 
-		auto model = Cube::Make<Vertex>(); 
-
-		//model.Transform(dx::XMMatrixScaling(1.0f, 1.0f, 1.2f));
+		auto model = Cube::MakeIndependent<Vertex>();	
+		model.SetNormalsIndependentFlat(); 
+		//modifies normals (which Vertex is composed of - along w. verts)
 
 		AddStaticBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
 
-		auto pvs = std::make_unique<VertexShader>(gfx, L"../x64/Debug/ColorIndexVS.cso");
+		auto pvs = std::make_unique<VertexShader>(gfx, L"../x64/Debug/PhongVS.cso");
 		//working directory is the folder that contains this cpp file (step up one, then into x64, etc.)
 		auto pvsbc = pvs->GetBytecode(); //used by InputLayout below
 
 		AddStaticBind(std::move(pvs));
 
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"../x64/Debug/ColorIndexPS.cso"));
+		AddStaticBind(std::make_unique<PixelShader>(gfx, L"../x64/Debug/PhongPS.cso"));
 
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
 
-		struct PixelShaderConstants
+		struct PSLightConstants
 		{
-			struct
-			{
-				float r;
-				float g;
-				float b;
-				float a;
-			} face_colors[8];
-		};
-		const PixelShaderConstants cb2 =
-		{
-			{
-				{ 1.0f,1.0f,1.0f },
-				{ 1.0f,0.0f,0.0f },
-				{ 0.0f,1.0f,0.0f },
-				{ 1.0f,1.0f,0.0f },
-				{ 0.0f,0.0f,1.0f },
-				{ 1.0f,0.0f,1.0f },
-				{ 0.0f,1.0f,1.0f },
-				{ 0.0f,0.0f,0.0f },
-			}
+			dx::XMVECTOR pos; 
 		};
 
-		AddStaticBind(std::make_unique<PixelConstantBuffer<PixelShaderConstants>>(gfx, cb2)); //gets hairy here!
+		AddStaticBind(std::make_unique<PixelConstantBuffer<PSLightConstants>>(gfx)); //gets hairy here!
 
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
 		{
 			{ "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
+			{"Normal", 0, DXGI_FORMAT_R32G32B32_FLOAT,0,12, D3D11_INPUT_PER_VERTEX_DATA,0 }
 		};
 
 		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
