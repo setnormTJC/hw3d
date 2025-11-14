@@ -4,7 +4,7 @@
 #include"SolidSphere.h"
 #include"ConstantBuffers.h"
 
-class PointLight //note that PointLight is NOT inheriting from bindable
+class PointLight //note that PointLight is NOT inheriting from bindable (but it DOES have a Bind function ...)
 {
 public: 
 	PointLight(Graphics& gfx, float radius = 0.5f);
