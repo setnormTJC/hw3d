@@ -18,6 +18,8 @@
 *	along with The Chili Direct3D Engine.  If not, see <http://www.gnu.org/licenses/>.    *
 ******************************************************************************************/
 #include "Window.h"
+#include<string> 
+#include<vector> 
 #include <sstream>
 #include "resource.h"
 #include "WindowsThrowMacros.h"
@@ -116,6 +118,7 @@ Window::~Window()
 
 void Window::SetTitle(const std::string& title)
 {
+	//if (SetWindowTextA(hWnd, title.c_str()) == 0)
 	if (SetWindowTextA(hWnd, title.c_str()) == 0)
 	{
 		throw CHWND_LAST_EXCEPT();

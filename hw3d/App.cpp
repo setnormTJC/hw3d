@@ -5,6 +5,7 @@
 
 #include"Box.h"
 #include"ChiliMath.h"
+#include"Cylinder.h"
 #include"GDIPlusManager.h"
 #include"imgui/imgui.h"
 #include"Sheet.h"
@@ -40,24 +41,43 @@ App::App()
 				cdist(rng), //random green 
 				cdist(rng) //etc.
 			};
+			
+			switch (sdist(rng))
+			{
+			case 0: 
+				return std::make_unique<Box>(gfx, rng,
+					adist, ddist,
+					odist, rdist,
+					bdist, mat); 
 
-			return std::make_unique<Box>(gfx, rng,
-				adist, ddist,
-				odist, rdist,
-				bdist, mat); 
+			case 1: 
+				return std::make_unique<Cylinder>(gfx, rng,
+					adist, ddist, odist, rdist, bdist, tdist);
+
+			default: 
+				assert(false && "impossible drawable option in factory");
+				return {};
+			}
+
 		}
 
 	private: 
+		using realDistrib = std::uniform_real_distribution<float>;
+		using wholeDistrib = std::uniform_int_distribution<int>;
+		
 		Graphics& gfx;
 		std::mt19937 rng{ std::random_device{}() };
-		std::uniform_real_distribution<float> adist{ 0.0f,PI * 2.0f };
-		std::uniform_real_distribution<float> ddist{ 0.0f,PI * 0.5f };
-		std::uniform_real_distribution<float> odist{ 0.0f,PI * 0.08f };
-		std::uniform_real_distribution<float> rdist{ 6.0f,20.0f };
-		std::uniform_real_distribution<float> bdist{ 0.4f,3.0f };
-		std::uniform_int_distribution<int> latdist{ 5,20 };
-		std::uniform_int_distribution<int> longdist{ 10,40 };
-		std::uniform_real_distribution<float> cdist {0.0f, 1.0f}; //COLOR distribution (for each of r, g, and b)
+
+		wholeDistrib sdist{ 0, 1 }; //IMPORTANT "magic number" here for switch above!
+		realDistrib adist{ 0.0f,PI * 2.0f };
+		realDistrib ddist{ 0.0f,PI * 0.5f };
+		realDistrib odist{ 0.0f,PI * 0.08f };
+		realDistrib rdist{ 6.0f,20.0f };
+		realDistrib bdist{ 0.4f,3.0f };
+		wholeDistrib latdist{ 5,20 };
+		wholeDistrib longdist{ 10,40 };
+		realDistrib cdist {0.0f, 1.0f}; //COLOR distribution (for each of r, g, and b)
+		wholeDistrib tdist{ 3, 30 };
 	};
 
 	Factory f(wnd.Gfx());

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "DrawableBase.h"
+#include "TestObject.h"
 #include <random>
-class Box : public DrawableBase<Box> //interesting template param! 
+class Box : public TestObject<Box> //interesting template param! 
 //("Curiously recurring template pattern")
 {
 public: 
@@ -16,28 +16,11 @@ public:
 		DirectX::XMFLOAT3 material
 	); 
 
-	void Update(float dt) noexcept override; 
+	//void Update(float dt) noexcept override; 
 	
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 
 private: 
-	float r; //radius 
-	float roll = 0.0f;
-	float pitch = 0.0f;
-	float yaw = 0.0f;
-
-	float theta;
-	float phi;
-	float chi; 
-	// speed (delta/s)
-
-	float droll;
-	float dpitch;
-	float dyaw;
-	float dtheta;
-	float dphi;
-	float dchi;
-
 	//model tranform
 	DirectX::XMFLOAT3X3 mt;
 };

@@ -4,13 +4,13 @@ cbuffer LightCBuf //set per frame (slot 0)
     float3 lightPos; 
     //float3 materialColor = { 0.7f, 0.7f, 0.7f }; //gray
 
-    float3 ambient = { 0.05f, 0.05f, 0.05f };
-    float3 diffuseColor = { 1.0f, 1.0f, 1.0f };
-    float diffuseIntensity = 1.0f;
+    float3 ambient;
+    float3 diffuseColor;
+    float diffuseIntensity;
 
-    float attConst = 1.0f; //attenuation constant 
-    float attLin = 0.045f; //linear
-    float attQuad = 0.0075f; //quadratic 
+    float attConst; //attenuation constant 
+    float attLin; //linear
+    float attQuad ; //quadratic 
 };
 
 cbuffer ObjectCBuf //set per object (slot 1) 
@@ -46,7 +46,7 @@ float4 main(float3 worldPos : Position, float3 n : Normal) : SV_Target
     
     //reflect(); //an "intrinsic" that can do the above
     
-    const float3 specular = (diffuseColor * diffuseIntensity) *
+    const float3 specular = att*(diffuseColor * diffuseIntensity) *
                     specularIntensity * pow(max(0.0f, dot(normalize(-r), normalize(worldPos))), specularPower);
     
     
