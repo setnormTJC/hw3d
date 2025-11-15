@@ -71,6 +71,7 @@ private:
 	};
 public:
 	Window(int width, int height, const char* name);
+	void setWidthAndHeight(); 
 	~Window();
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;

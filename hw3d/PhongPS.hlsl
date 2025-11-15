@@ -32,7 +32,7 @@ float4 main(float3 worldPos : Position, float3 n : Normal) : SV_Target
     const float distToL = length(vToL); //"geometric" length (vector magnitude) - not array length
     //length is referred to as an "intrisic" function in HLSLf
     
-    const float3 dirToL = vToL / distToL;
+    const float3 dirToL = vToL / distToL; //NORMALIZED 
     
     //diffuse attenuation: 
     const float att = 1.0f/(attConst + attLin * distToL + attQuad*(distToL * distToL));
@@ -41,13 +41,13 @@ float4 main(float3 worldPos : Position, float3 n : Normal) : SV_Target
     //dot intrinsic function here - * means "element-wise" (Hadamard) multiplication
     
     //specular things (how "shiny" is an object?)
-    const float3 w = n * dot(dirToL, n); 
-    const float3 r = w * 2.0f - dirToL; //r as in "reflected" light
+    const float3 w = n * dot(vToL, n); 
+    const float3 r = w * 2.0f - vToL; //r as in "reflected" light
     
     //reflect(); //an "intrinsic" that can do the above
     
     const float3 specular = (diffuseColor * diffuseIntensity) *
-                    specularIntensity * pow(max(0.0f, dot(normalize(r), normalize(worldPos))), specularPower);
+                    specularIntensity * pow(max(0.0f, dot(normalize(-r), normalize(worldPos))), specularPower);
     
     
     //final color 

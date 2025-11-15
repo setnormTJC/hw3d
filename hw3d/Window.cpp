@@ -23,6 +23,7 @@
 #include "WindowsThrowMacros.h"
 #include"imgui/imgui_impl_win32.h"
 
+
 // Window Class Stuff
 Window::WindowClass Window::WindowClass::wndClass;
 

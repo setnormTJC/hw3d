@@ -17,7 +17,8 @@ void TransformCbuf::Bind(Graphics& gfx) noexcept
 
     const Transforms tf =
     {
-        DirectX::XMMatrixTranspose(model), 
+        DirectX::XMMatrixTranspose(model * gfx.GetCamera()), //now model-view passed to vertex shader
+
         //transpose is here because GPU expects row major but we store in col. major
         //(or the opposite of that - can't remember)
         DirectX::XMMatrixTranspose(

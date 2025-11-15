@@ -5,11 +5,13 @@
 #include "ChiliException.h"
 #include <d3dcompiler.h>
 #include <d3d11.h>
-#include <wrl.h>
+#include<DirectXMath.h>
+#include<utility> //for std::pair (window width and height)
 #include <vector>
+#include <wrl.h>
+
 #include "DxgiInfoManager.h"
 
-#include<DirectXMath.h>
 
 class Bindable; //forward declaration for friendship without #including (circular dependency)
 
@@ -60,6 +62,9 @@ public:
 	Graphics& operator=(const Graphics&) = delete;
 	~Graphics() = default;
 	
+	/*A function that I added*/
+	static std::pair<int, int> getScreenWidthAndHeight() noexcept;
+
 	void BeginFrame(float red, float green, float blue) noexcept; 
 	void EndFrame();
 	void EnableImgui() noexcept; 

@@ -81,8 +81,11 @@ Graphics::Graphics(HWND hWnd)
 
 	wrl::ComPtr<ID3D11Texture2D> pDepthStencil; 
 	D3D11_TEXTURE2D_DESC descDepth = {}; 
-	descDepth.Width = 800u; //needs to match the swap chain width and height 
-	descDepth.Height = 600u; 
+	descDepth.Width = 1200u; //needs to match the swap chain width and height 
+	descDepth.Height = 900u; 
+	//descDepth.Width = getScreenWidthAndHeight().first; 
+	//descDepth.Height = getScreenWidthAndHeight().second; 
+
 	descDepth.MipLevels = 1u; 
 	descDepth.ArraySize = 1u; 
 	descDepth.Format = DXGI_FORMAT_D32_FLOAT; //d as in depth 
@@ -104,8 +107,11 @@ Graphics::Graphics(HWND hWnd)
 
 	// configure viewport
 	D3D11_VIEWPORT vp;
-	vp.Width = 800;
-	vp.Height = 600;
+	vp.Width = 1200;
+	vp.Height = 900;
+	//vp.Width = getScreenWidthAndHeight().first; 
+	//vp.Height = getScreenWidthAndHeight().second; 
+
 	vp.MinDepth = 0;
 	vp.MaxDepth = 1;
 	vp.TopLeftX = 0;
@@ -116,6 +122,23 @@ Graphics::Graphics(HWND hWnd)
 	//init imgui: 
 	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 
+}
+
+std::pair<int, int> Graphics::getScreenWidthAndHeight() noexcept
+{
+	std::pair<int, int> widthAndHeight; 
+
+	HDC screenDC = GetDC(NULL); 
+
+	if (screenDC != NULL)
+	{
+		widthAndHeight.first = GetDeviceCaps(screenDC, HORZRES);
+		widthAndHeight.second = GetDeviceCaps(screenDC, VERTRES);
+
+		ReleaseDC(NULL, screenDC);
+	}
+
+	return widthAndHeight;
 }
 
 void Graphics::BeginFrame(float red, float green, float blue) noexcept

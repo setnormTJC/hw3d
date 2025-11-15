@@ -18,7 +18,9 @@ GDIPlusManager gdipm; //GLOBAL var here!
 
 App::App()
 	:
-	wnd(800, 600, "The Window title"), 
+	wnd(1200, 900, "The Window title"), //previously 800 x 600
+	//wnd(wnd.Gfx().getScreenWidthAndHeight().first, wnd.Gfx().getScreenWidthAndHeight().second,
+	//	"The Window title"), 
 	light(wnd.Gfx())
 {
 	class Factory
@@ -65,7 +67,12 @@ App::App()
 
 	//hardcoded initial perspective matrix params: 
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
-
+	
+	//wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1440.0f/2560.0f, 1.0f, 0.5f, 40.0f));
+	
+	//NOTE: the hardcoded values above (1440, 2560) ONLY work for a monitor in PORTAIT mode with 1440p resolution
+	// (this is my setup at home) 
+	
 }
 
 int App::Go()
@@ -89,7 +96,7 @@ void App::DoFrame()
 	wnd.Gfx().BeginFrame(0.05f, 0.05f, 0.15f); 
 	wnd.Gfx().SetCamera(cam.GetMatrix()); 
 
-	light.Bind(wnd.Gfx()); 
+	light.Bind(wnd.Gfx(), wnd.Gfx().GetCamera()); 
 
 	for (auto& d : drawables)
 	{
