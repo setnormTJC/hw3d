@@ -12,7 +12,9 @@ public:
 		std::uniform_real_distribution<float>& ddist, //delta? (how fast change in mvmt occurs?)
 		std::uniform_real_distribution<float>& odist, //origin(al position)
 		std::uniform_real_distribution<float>& rdist, //radius (box size scaling, perhaps)
-		std::uniform_real_distribution<float>& bdist); //brightness? possibly
+		std::uniform_real_distribution<float>& bdist, //brightness? possibly
+		DirectX::XMFLOAT3 material
+	); 
 
 	void Update(float dt) noexcept override; 
 	

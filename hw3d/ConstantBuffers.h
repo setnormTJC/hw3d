@@ -10,7 +10,7 @@ class ConstantBuffer : public Bindable
 {
 public: 
 	/*called by TransformCBuf -> fancy design*/
-	void Update(Graphics& gfx, const C& consts) //consts is??
+	void Update(Graphics& gfx, const C& consts) //the C here can be SLOTS to bind to in GPU (among other things) 
 	{
 		INFOMAN(gfx); 
 
@@ -28,7 +28,9 @@ public:
 		GetContext(gfx)->Unmap(pConstantBuffer.Get(), 0u); //another new thing
 	}
 
-	ConstantBuffer(Graphics& gfx, const C& consts)
+	ConstantBuffer(Graphics& gfx, const C& consts, UINT slot = 0u)
+		:
+		slot(slot)
 	{
 		INFOMAN(gfx);
 
@@ -47,7 +49,9 @@ public:
 	}
 
 
-	ConstantBuffer(Graphics& gfx)
+	ConstantBuffer(Graphics& gfx, UINT slot = 0u)
+		:
+		slot(slot)
 	{
 
 		INFOMAN(gfx);
@@ -68,6 +72,7 @@ public:
 
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer;
+	UINT slot; //example use: bind info on point light to slot 0, add color of a Drawable to slot 1
 };
 
 template <typename C>
@@ -75,6 +80,7 @@ class VertexConstantBuffer : public ConstantBuffer<C>
 {
 
 	using ConstantBuffer<C>::pConstantBuffer;
+	using ConstantBuffer<C>::slot;
 	using Bindable::GetContext;
 	//if these 2 using statements are commented out 
 	//then errors get thrown on building
@@ -84,7 +90,7 @@ public:
 	using ConstantBuffer<C>::ConstantBuffer;
 	void Bind(Graphics& gfx) noexcept override
 	{
-		GetContext(gfx)->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
+		GetContext(gfx)->VSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf());
 	}
 };
 
@@ -93,13 +99,14 @@ template <typename C>
 class PixelConstantBuffer : public ConstantBuffer<C>
 {
 	using ConstantBuffer<C>::pConstantBuffer;
+	using ConstantBuffer<C>::slot;
 	using Bindable::GetContext; 
 
 public:
 	using ConstantBuffer<C>::ConstantBuffer;
 	void Bind(Graphics& gfx) noexcept override
 	{
-		GetContext(gfx)->PSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
+		GetContext(gfx)->PSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf());
 	}
 };
 

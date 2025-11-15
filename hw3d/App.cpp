@@ -31,11 +31,18 @@ App::App()
 
 		std::unique_ptr<Drawable> operator()()
 		{
+			/*The material (object)'s color*/
+			const DirectX::XMFLOAT3 mat =
+			{
+				cdist(rng), //random red intensity between 0 and 1
+				cdist(rng), //random green 
+				cdist(rng) //etc.
+			};
+
 			return std::make_unique<Box>(gfx, rng,
 				adist, ddist,
 				odist, rdist,
-				bdist); 
-
+				bdist, mat); 
 		}
 
 	private: 
@@ -48,8 +55,7 @@ App::App()
 		std::uniform_real_distribution<float> bdist{ 0.4f,3.0f };
 		std::uniform_int_distribution<int> latdist{ 5,20 };
 		std::uniform_int_distribution<int> longdist{ 10,40 };
-		std::uniform_int_distribution<int> typedist{ 0,2 }; // important magic number here!
-
+		std::uniform_real_distribution<float> cdist {0.0f, 1.0f}; //COLOR distribution (for each of r, g, and b)
 	};
 
 	Factory f(wnd.Gfx());

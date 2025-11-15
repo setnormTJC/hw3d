@@ -16,11 +16,19 @@ public:
 private: 
 	struct PointLightCBuf
 	{
-		DirectX::XMFLOAT3 pos; 
-		float padding; //no initialization??
+		alignas(16)DirectX::XMFLOAT3 pos; //alignas used!
+		alignas(16)DirectX::XMFLOAT3 ambient;
+		alignas(16)DirectX::XMFLOAT3 diffuseColor;
+		float diffuseIntensity;
+
+		float attConst; //attenuation constant 
+		float attLin; //linear
+		float attQuad; //quadratic 
 	};
 private: 
-	DirectX::XMFLOAT3 pos = { 0.0f, 0.0f, 0.0f }; 
+	//DirectX::XMFLOAT3 pos = { 0.0f, 0.0f, 0.0f }; 
+	PointLightCBuf cbData; 
+	
 	/*The mesh here is going to act as a "lightbulb" - this makes the light source "obvious"*/
 	mutable SolidSphere mesh; //mutable!!!
 	mutable PixelConstantBuffer<PointLightCBuf> cbuf; //again, mutable!
