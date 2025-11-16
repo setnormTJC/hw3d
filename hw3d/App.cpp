@@ -11,6 +11,7 @@
 #include"Sheet.h"
 #include"SkinnedBox.h"
 #include"Surface.h"
+#include "Pyramid.h"
 
 
 
@@ -54,6 +55,14 @@ App::App()
 				return std::make_unique<Cylinder>(gfx, rng,
 					adist, ddist, odist, rdist, bdist, tdist);
 
+			case 2:
+				return std::make_unique<Pyramid>(gfx, rng,
+					adist, ddist, odist, rdist, tdist);
+
+			case 3:
+				return std::make_unique<SkinnedBox>(gfx, rng,
+					adist, ddist, odist, rdist);
+
 			default: 
 				assert(false && "impossible drawable option in factory");
 				return {};
@@ -68,7 +77,7 @@ App::App()
 		Graphics& gfx;
 		std::mt19937 rng{ std::random_device{}() };
 
-		wholeDistrib sdist{ 0, 1 }; //IMPORTANT "magic number" here for switch above!
+		wholeDistrib sdist{ 0, 3 }; //IMPORTANT "magic number" here for switch above!
 		realDistrib adist{ 0.0f,PI * 2.0f };
 		realDistrib ddist{ 0.0f,PI * 0.5f };
 		realDistrib odist{ 0.0f,PI * 0.08f };

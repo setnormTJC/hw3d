@@ -11,16 +11,6 @@ Cylinder::Cylinder(Graphics& gfx, std::mt19937& rng, realDistrib& adist, realDis
 	namespace dx = DirectX;
 	if (!IsStaticInitialized())
 	{
-		struct Vertex
-		{
-			dx::XMFLOAT3 pos;
-			dx::XMFLOAT3 n;
-		};
-
-		auto model = Prism::MakeTesselatedIndependentCapNormals<Vertex>(tdist(rng));
-		//model.SetNormalsIndependentFlat(); 
-
-		AddStaticBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
 
 		auto pvs = std::make_unique<VertexShader>(gfx, L"../x64/Debug/PhongVS.cso");
 		//working directory is the folder that contains this cpp file (step up one, then into x64, etc.)
@@ -29,8 +19,6 @@ Cylinder::Cylinder(Graphics& gfx, std::mt19937& rng, realDistrib& adist, realDis
 		AddStaticBind(std::move(pvs));
 
 		AddStaticBind(std::make_unique<PixelShader>(gfx, L"../x64/Debug/IndexedPhongPS.cso"));
-
-		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
 
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
 		{
@@ -63,17 +51,21 @@ Cylinder::Cylinder(Graphics& gfx, std::mt19937& rng, realDistrib& adist, realDis
 
 	}
 
-	else
+	struct Vertex
 	{
-		SetIndexFromStatic();
-		//prevents pIndexBuffer from being nullptr if multiple Drawables of same type are being drawn
-	}
+		dx::XMFLOAT3 pos;
+		dx::XMFLOAT3 n;
+	};
+
+	auto index = tdist(rng); 
+
+	const auto model = Prism::MakeTesselatedIndependentCapNormals<Vertex>(index);
+
+	AddBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
+
+	AddIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
+
 
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this)); //NON-static
 
-	//// model deformation transform (per instance, not stored as bind)
-	//dx::XMStoreFloat3x3(
-	//	&mt,
-	//	dx::XMMatrixScaling(1.0f, 1.0f, bdist(rng))
-	//);
 }

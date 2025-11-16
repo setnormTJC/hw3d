@@ -1,18 +1,16 @@
-#include "SkinnedBox.h"
+#include "Pyramid.h"
 #include "BindableBase.h"
 #include "GraphicsThrowMacros.h"
-#include "Cube.h"
-#include "Surface.h"
-#include "Texture.h"
-#include "Sampler.h"
+#include "Cone.h"
+#include <array>
 
 
-SkinnedBox::SkinnedBox(Graphics& gfx,
-	std::mt19937& rng,
+Pyramid::Pyramid(Graphics& gfx, std::mt19937& rng,
 	std::uniform_real_distribution<float>& adist,
 	std::uniform_real_distribution<float>& ddist,
 	std::uniform_real_distribution<float>& odist,
-	std::uniform_real_distribution<float>& rdist)
+	std::uniform_real_distribution<float>& rdist,
+	std::uniform_int_distribution<int>& tdist)
 	:
 	TestObject(gfx, rng, adist, ddist, odist, rdist)
 {
@@ -24,23 +22,32 @@ SkinnedBox::SkinnedBox(Graphics& gfx,
 		{
 			dx::XMFLOAT3 pos;
 			dx::XMFLOAT3 n;
-			dx::XMFLOAT2 tc; 
+			std::array<char, 4> color;
+			char padding;
 		};
-
-		auto model = Cube::MakeIndependentTextured<Vertex>();
-		model.SetNormalsIndependentFlat(); 
+		const auto tesselation = tdist(rng);
+		auto model = Cone::MakeTesselatedIndependentFaces<Vertex>(tesselation);
+		// set vertex colors for mesh (tip red blending to blue base)
+		for (auto& v : model.vertices)
+		{
+			v.color = { (char)10,(char)10,(char)255 };
+		}
+		for (int i = 0; i < tesselation; i++)
+		{
+			model.vertices[i * 3].color = { (char)255,(char)10,(char)10 };
+		}
+		// squash mesh a bit in the z direction
+		model.Transform(dx::XMMatrixScaling(1.0f, 1.0f, 0.7f));
+		// add normals
+		model.SetNormalsIndependentFlat();
 
 		AddStaticBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
 
-		AddStaticBind(std::make_unique<Texture>(gfx, Surface::FromFile("Images\\Ramona.png")));
-
-		auto pvs = std::make_unique<VertexShader>(gfx, L"../x64/Debug/TexturedPhongVS.cso");
+		auto pvs = std::make_unique<VertexShader>(gfx, L"../x64/Debug/BlendedPhongVS.cso");
 		auto pvsbc = pvs->GetBytecode();
 		AddStaticBind(std::move(pvs));
 
-		AddStaticBind(std::make_unique<Sampler>(gfx)); 
-
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"../x64/Debug/TexturedPhongPS.cso"));
+		AddStaticBind(std::make_unique<PixelShader>(gfx, L"../x64/Debug/BlendedPhongPS.cso"));
 
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
 
@@ -48,7 +55,7 @@ SkinnedBox::SkinnedBox(Graphics& gfx,
 		{
 			{ "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
 			{ "Normal",0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0 },
-			{ "TexCoord",0,DXGI_FORMAT_R32G32_FLOAT,0,24,D3D11_INPUT_PER_VERTEX_DATA,0 },
+			{ "Color",0,DXGI_FORMAT_R8G8B8A8_UNORM,0,24,D3D11_INPUT_PER_VERTEX_DATA,0 },
 		};
 		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
 
@@ -60,10 +67,8 @@ SkinnedBox::SkinnedBox(Graphics& gfx,
 			float specularPower = 30.0f;
 			float padding[2];
 		} colorConst;
-
 		AddStaticBind(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, colorConst, 1u));
 	}
-
 	else
 	{
 		SetIndexFromStatic();
@@ -71,4 +76,3 @@ SkinnedBox::SkinnedBox(Graphics& gfx,
 
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
 }
-
