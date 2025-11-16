@@ -94,6 +94,15 @@ App::App()
 	drawables.reserve(nDrawables); 
 	std::generate_n(std::back_inserter(drawables), nDrawables, f);
 
+	for (auto& pd : drawables)
+	{
+		if (auto pb = dynamic_cast<Box*> (pd.get())) //again, ASSIGNMENT used here!
+		{
+			boxes.push_back(pb); 
+		}
+	}
+
+
 	//hardcoded initial perspective matrix params: 
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
 	
@@ -135,25 +144,83 @@ void App::DoFrame()
 
 	light.Draw(wnd.Gfx()); 
 
-	static char buffer[1024]; 
+	SpawnSimulationWindow(); 
+	cam.SpawnControlWindow();
+	light.SpawnControlWindow(); 
 
+	SpawnBoxWindowManagerWindow(); 
+
+	SpawnBoxWindows(); 
+
+	wnd.Gfx().EndFrame();
+
+}
+
+void App::SpawnSimulationWindow() noexcept
+{
 	//control simulation speed with imgui!
 	if (ImGui::Begin("Simulation speed")) //creates a window
 	{
 		ImGui::SliderFloat("Speed factor", &speed_factor, 0.0f, 4.0f);
-		ImGui::Text("App average %.3f ms/frame (%.1f FPS)", 
-			1000.0f/ImGui::GetIO().Framerate, 
+		ImGui::Text("App average %.3f ms/frame (%.1f FPS)",
+			1000.0f / ImGui::GetIO().Framerate,
 			ImGui::GetIO().Framerate);
 
-		ImGui::InputText("Label", buffer, sizeof(buffer)); 
+		ImGui::Text("Status: %s", wnd.kbd.KeyIsPressed(VK_SPACE) ? "PAUSED" : "RUNNING (hold spacebar to pause)");
 	}
-	ImGui::End(); 
+	ImGui::End();
+}
 
-	cam.SpawnControlWindow();
-	light.SpawnControlWindow(); 
+void App::SpawnBoxWindowManagerWindow() noexcept
+{
+	if (ImGui::Begin("Boxes"))
+	{
+		using namespace std::string_literals;
 
-	wnd.Gfx().EndFrame();
+		const std::string preview = comboBoxIndex ? std::to_string(*comboBoxIndex) : "Choose a box..."s;
+		//std optional has dereferencing operator 
+		if (ImGui::BeginCombo("Box number", preview.c_str()))
+		{
+			for (int i = 0; i < boxes.size(); ++i)
+			{
+				const bool selected = comboBoxIndex.has_value() && (*comboBoxIndex == i);
+				//const bool selected = *comboBoxIndex == i; //bool expression here
+				if (ImGui::Selectable(std::to_string(i).c_str(), selected))
+				{
+					comboBoxIndex = i;
+				}
+				if (selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
 
+		if (ImGui::Button("Spawn control window") && comboBoxIndex)
+		{
+			boxControlIds.insert(*comboBoxIndex);
+			comboBoxIndex.reset(); //not sure what this fellow does
+		}
+	}
+
+	ImGui::End();
+}
+
+void App::SpawnBoxWindows() noexcept
+{
+	for (auto i = boxControlIds.begin(); i != boxControlIds.end();)
+	{
+		//remove the control window for a box if it is closed
+		if (!boxes[*i]->SpawnControlWindow(*i, wnd.Gfx()))
+		{
+			i = boxControlIds.erase(i);  
+		}
+		else
+		{
+			i++; 
+		}
+	}
 }
 
 App::~App()

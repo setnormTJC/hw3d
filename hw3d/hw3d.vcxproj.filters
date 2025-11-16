@@ -55,7 +55,7 @@
     <Filter Include="Source Files\imgui">
       <UniqueIdentifier>{1ec3734e-2be0-4b92-885a-1377d607dd32}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Geometry">
+    <Filter Include="Header Files\Geometry">
       <UniqueIdentifier>{d6ed8171-36ba-473a-bb04-012c3cc91e5f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -211,16 +211,16 @@
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="Cube.h">
-      <Filter>Geometry</Filter>
+      <Filter>Header Files\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="IndexedTriangleList.h">
-      <Filter>Geometry</Filter>
+      <Filter>Header Files\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="Prism.h">
-      <Filter>Geometry</Filter>
+      <Filter>Header Files\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="Cone.h">
-      <Filter>Geometry</Filter>
+      <Filter>Header Files\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="Pyramid.h">
       <Filter>Header Files\Drawable</Filter>
@@ -342,7 +342,7 @@
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
     <ClCompile Include="Pyramid.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Drawable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
