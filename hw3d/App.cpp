@@ -3,6 +3,7 @@
 #include <algorithm>
 #include<random>
 
+#include"AssTest.h"
 #include"Box.h"
 #include"ChiliMath.h"
 #include"Cylinder.h"
@@ -13,9 +14,9 @@
 #include"Surface.h"
 #include "Pyramid.h"
 
-#include<assimp/Importer.hpp>
-#include<assimp/scene.h>
-#include<assimp/postprocess.h>
+//#include<assimp/Importer.hpp>
+//#include<assimp/scene.h>
+//#include<assimp/postprocess.h>
 
 
 
@@ -29,16 +30,6 @@ App::App()
 	//	"The Window title"), 
 	light(wnd.Gfx())
 {
-
-	Assimp::Importer imp; 
-
-	auto model = imp.ReadFile("models/suzanne.obj", 
-		aiProcess_Triangulate |
-	aiProcess_JoinIdenticalVertices); //enum flags bitwise OR'd!
-
-	int a = 123; 
-
-
 
 	class Factory
 	{
@@ -78,6 +69,10 @@ App::App()
 				return std::make_unique<SkinnedBox>(gfx, rng,
 					adist, ddist, odist, rdist);
 
+			case 4:
+				return std::make_unique<AssTest>(gfx, rng,
+					adist, ddist, odist, rdist, mat, 1.5f);
+
 			default: 
 				assert(false && "impossible drawable option in factory");
 				return {};
@@ -92,7 +87,7 @@ App::App()
 		Graphics& gfx;
 		std::mt19937 rng{ std::random_device{}() };
 
-		wholeDistrib sdist{ 0, 3 }; //IMPORTANT "magic number" here for switch above!
+		wholeDistrib sdist{ 0, 4 }; //IMPORTANT "magic number" here for switch above!
 		realDistrib adist{ 0.0f,PI * 2.0f };
 		realDistrib ddist{ 0.0f,PI * 0.5f };
 		realDistrib odist{ 0.0f,PI * 0.08f };
