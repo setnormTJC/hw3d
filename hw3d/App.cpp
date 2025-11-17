@@ -13,6 +13,10 @@
 #include"Surface.h"
 #include "Pyramid.h"
 
+#include<assimp/Importer.hpp>
+#include<assimp/scene.h>
+#include<assimp/postprocess.h>
+
 
 
 GDIPlusManager gdipm; //GLOBAL var here!
@@ -25,6 +29,17 @@ App::App()
 	//	"The Window title"), 
 	light(wnd.Gfx())
 {
+
+	Assimp::Importer imp; 
+
+	auto model = imp.ReadFile("models/suzanne.obj", 
+		aiProcess_Triangulate |
+	aiProcess_JoinIdenticalVertices); //enum flags bitwise OR'd!
+
+	int a = 123; 
+
+
+
 	class Factory
 	{
 	public: 

@@ -69,13 +69,14 @@ ScaffoldingReadMe.txt
 # StyleCop
 StyleCopReport.xml
 
-# Files built by Visual Studio
+# Files built by Visual Studio (note the ! on obj files in the Models folder!)
 *_i.c
 *_p.c
 *_h.h
 *.ilk
 *.meta
 *.obj
+!hw3d/Models/*.obj
 *.iobj
 *.pch
 *.pdb

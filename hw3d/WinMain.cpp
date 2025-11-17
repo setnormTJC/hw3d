@@ -19,7 +19,8 @@
 ******************************************************************************************/
 #include "App.h"
 
-//#include"ChiliWin.h"
+
+//#include"assimp/assimp/aabb.h" //what a weird header file name...
 
 int CALLBACK WinMain(
 	HINSTANCE hInstance,

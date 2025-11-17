@@ -5,6 +5,8 @@
 #include"imgui/imgui.h"
 #include "Sphere.h"
 
+
+
 Box::Box(Graphics& gfx,
 	std::mt19937& rng,
 	std::uniform_real_distribution<float>& adist,
@@ -72,6 +74,8 @@ Box::Box(Graphics& gfx,
 		&mt,
 		dx::XMMatrixScaling(1.0f, 1.0f, bdist(rng))
 	);
+	//the above is similar to:
+	//mt = dx::XMMatrixScaling(1.0f, 1.0f, bdist(rng)); //won't work - 3 x 3 v 4 x 4
 }
 
 bool Box::SpawnControlWindow(int id, Graphics& gfx) noexcept
