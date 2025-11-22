@@ -221,40 +221,75 @@
       <FileName>Camera.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="VertexLayout">
-    <Position X="8.5" Y="24.75" Width="2.5" />
+  <Class Name="hw3dexp::VertexLayout">
+    <Position X="10" Y="23" Width="2.25" />
     <Compartments>
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
     <NestedTypes>
-      <Enum Name="VertexLayout::ElementType" Collapsed="true">
+      <Struct Name="hw3dexp::VertexLayout::Map&lt;Float4Color&gt;" Collapsed="true">
         <TypeIdentifier>
-          <NewMemberFileName>VertexLayout.h</NewMemberFileName>
+          <NewMemberFileName>Vertex.h</NewMemberFileName>
         </TypeIdentifier>
-      </Enum>
-      <Class Name="VertexLayout::Element" Collapsed="true">
+      </Struct>
+      <Struct Name="hw3dexp::VertexLayout::Map&lt;Float3Color&gt;" Collapsed="true">
         <TypeIdentifier>
-          <NewMemberFileName>VertexLayout.h</NewMemberFileName>
+          <NewMemberFileName>Vertex.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Class Name="hw3dexp::VertexLayout::Element" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Vertex.h</NewMemberFileName>
         </TypeIdentifier>
       </Class>
+      <Enum Name="hw3dexp::VertexLayout::ElementType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Vertex.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Struct Name="hw3dexp::VertexLayout::Map&lt;Position3D&gt;" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Vertex.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="hw3dexp::VertexLayout::Map&lt;Position2D&gt;">
+        <TypeIdentifier>
+          <NewMemberFileName>Vertex.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="hw3dexp::VertexLayout::Map&lt;Texture2D&gt;" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Vertex.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="hw3dexp::VertexLayout::Map&lt;Normal&gt;" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Vertex.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="hw3dexp::VertexLayout::Map&lt;BGRAColor&gt;">
+        <TypeIdentifier>
+          <NewMemberFileName>Vertex.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAACAgBAAAAAAAAAAAAAAAQAAAAAAAAACAAA=</HashCode>
-      <FileName>VertexLayout.h</FileName>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Vertex.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Vertex">
-    <Position X="5.25" Y="24.75" Width="2.5" />
+  <Class Name="hw3dexp::Vertex">
+    <Position X="7" Y="23" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAgAAAACABAAAAAAAgAAAAAAAAAAAAAAAACQAAAAA=</HashCode>
-      <FileName>VertexLayout.h</FileName>
+      <FileName>Vertex.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Struct Name="BGRAColor">
-    <Position X="2.75" Y="25.25" Width="1.5" />
+  <Struct Name="hw3dexp::BGRAColor">
+    <Position X="8.25" Y="31.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAQABAAAAAAA=</HashCode>
-      <FileName>VertexLayout.h</FileName>
+      <FileName>Vertex.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Font Name="Segoe UI" Size="9" />

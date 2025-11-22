@@ -3,6 +3,8 @@
 #include"Bindable.h"
 #include "GraphicsThrowMacros.h"
 
+#include"Vertex.h"
+
 class VertexBuffer : public Bindable
 {
 public: 
@@ -26,6 +28,29 @@ public:
 
 		D3D11_SUBRESOURCE_DATA sd = {};
 		sd.pSysMem = vertices.data();
+		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&bd, &sd, &pVertexBuffer));
+
+	}
+
+	/*Overload that works with Vertex.h
+	* @param vbuf -> NOTE the type's namespace use to avoid a clash
+	*/
+	VertexBuffer(Graphics& gfx, const hw3dexp::VertexBuffer& vbuf)
+		:
+		stride((UINT)vbuf.GetLayout().Size()) //the size here is the size of a SINGLE vertex 
+	{
+		INFOMAN(gfx);
+
+		D3D11_BUFFER_DESC bd = {};
+		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.CPUAccessFlags = 0u;
+		bd.MiscFlags = 0u;
+		bd.ByteWidth = (UINT)vbuf.SizeBytes();
+		bd.StructureByteStride = stride; //a member var initialized above (using vbuf stuff)
+
+		D3D11_SUBRESOURCE_DATA sd = {};
+		sd.pSysMem = vbuf.GetData(); 
 		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&bd, &sd, &pVertexBuffer));
 
 	}
