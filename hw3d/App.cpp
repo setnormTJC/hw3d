@@ -13,6 +13,7 @@
 #include"SkinnedBox.h"
 #include"Surface.h"
 #include "Pyramid.h"
+#include "VertexLayout.h"
 
 //#include<assimp/Importer.hpp>
 //#include<assimp/scene.h>
@@ -22,6 +23,34 @@
 
 GDIPlusManager gdipm; //GLOBAL var here!
 
+void f()
+{
+
+	VertexBuffer vb(std::move(
+		VertexLayout{}
+		.Append<VertexLayout::Position3D>()
+		.Append<VertexLayout::Normal>()
+		.Append<VertexLayout::Texture2D>()
+	));
+	vb.EmplaceBack(
+		DirectX::XMFLOAT3{ 1.0f,1.0f,5.0f },
+		DirectX::XMFLOAT3{ 2.0f,1.0f,4.0f },
+		DirectX::XMFLOAT2{ 6.0f,9.0f }
+	);
+	vb.EmplaceBack(
+		DirectX::XMFLOAT3{ 6.0f,9.0f,6.0f },
+		DirectX::XMFLOAT3{ 9.0f,6.0f,9.0f },
+		DirectX::XMFLOAT2{ 4.2f,0.0f }
+	);
+	auto pos = vb[0].Attr<VertexLayout::Position3D>();
+	auto nor = vb[0].Attr<VertexLayout::Normal>();
+	auto tex = vb[1].Attr<VertexLayout::Texture2D>();
+	vb.Back().Attr<VertexLayout::Position3D>().z = 420.0f;
+	pos = vb.Back().Attr<VertexLayout::Position3D>();
+
+	int a = 123; 
+}
+
 
 App::App()
 	:
@@ -30,6 +59,8 @@ App::App()
 	//	"The Window title"), 
 	light(wnd.Gfx())
 {
+
+	f(); 
 
 	class Factory
 	{

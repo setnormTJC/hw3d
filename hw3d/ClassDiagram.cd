@@ -3,7 +3,7 @@
   <Class Name="App">
     <Position X="0.5" Y="0.75" Width="4.75" />
     <TypeIdentifier>
-      <HashCode>AASIBAAAAAAAAAAAAAAAEAAAEAIAAABAAgAAAIggAAA=</HashCode>
+      <HashCode>ABSIBAAAAAAAAAEAYAQAEAIAEAIAAABAAgAAAIggAAA=</HashCode>
       <FileName>App.h</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -131,7 +131,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="VertexBuffer">
-    <Position X="0.5" Y="16" Width="1.5" />
+    <Position X="0.5" Y="20.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAEAA=</HashCode>
       <FileName>VertexBuffer.h</FileName>
@@ -147,14 +147,21 @@
   <Class Name="Drawable">
     <Position X="21.5" Y="7.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>IAQAAAAAAAAAQgAABAAABAAAAAQAAAAAgABAAAAAAAI=</HashCode>
+      <HashCode>IAQAABAAAAAAQgAABAAABAAAAAQAAAAAgABAAAAAAAI=</HashCode>
       <FileName>Drawable.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Box">
     <Position X="18.5" Y="20.25" Width="1.5" />
+    <NestedTypes>
+      <Struct Name="Box::PSMaterialConstant" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Box.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>IAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAACAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAIAAAAAgAAAAAAAAAAAAAIgAAAACAAAAAAAAAA=</HashCode>
       <FileName>Box.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -172,7 +179,7 @@
       <FileName>TestObject.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Cylinder&lt;T&gt;">
+  <Class Name="Cylinder">
     <Position X="21.25" Y="20.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAA=</HashCode>
@@ -193,5 +200,62 @@
       <FileName>TransformCbuf.h</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="PointLight">
+    <Position X="11.25" Y="4" Width="1.5" />
+    <NestedTypes>
+      <Struct Name="PointLight::PointLightCBuf" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>PointLight.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAgEAAAAAABgAACAAAAAAAAAAhAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>PointLight.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Camera">
+    <Position X="14" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQACBAAAAAAACAAgAAAgAEAAAAABAAAAAAA=</HashCode>
+      <FileName>Camera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VertexLayout">
+    <Position X="8.5" Y="24.75" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="VertexLayout::ElementType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>VertexLayout.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Class Name="VertexLayout::Element" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>VertexLayout.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAgBAAAAAAAAAAAAAAAQAAAAAAAAACAAA=</HashCode>
+      <FileName>VertexLayout.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vertex">
+    <Position X="5.25" Y="24.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAACABAAAAAAAgAAAAAAAAAAAAAAAACQAAAAA=</HashCode>
+      <FileName>VertexLayout.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="BGRAColor">
+    <Position X="2.75" Y="25.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAQABAAAAAAA=</HashCode>
+      <FileName>VertexLayout.h</FileName>
+    </TypeIdentifier>
+  </Struct>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>
