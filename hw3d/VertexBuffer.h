@@ -35,7 +35,7 @@ public:
 	/*Overload that works with Vertex.h
 	* @param vbuf -> NOTE the type's namespace use to avoid a clash
 	*/
-	VertexBuffer(Graphics& gfx, const hw3dexp::VertexBuffer& vbuf)
+	VertexBuffer(Graphics& gfx, const Dvtx::VertexBuffer& vbuf)
 		:
 		stride((UINT)vbuf.GetLayout().Size()) //the size here is the size of a SINGLE vertex 
 	{

@@ -1,10 +1,9 @@
 #pragma once
-#include "Box.h"
 #include"Camera.h"
 #include "ChiliTimer.h"
 #include"Drawable.h"
 #include"ImguiManager.h"
-#include"Model.h"
+#include"Mesh.h"
 #include"PointLight.h"
 #include "Window.h"
 

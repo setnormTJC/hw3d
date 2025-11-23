@@ -1,7 +1,7 @@
 #pragma once
 
 #include"DrawableBase.h"
-#include"BindableBase.h"
+#include"BindableCommon.h"
 #include"Vertex.h"
 #include<assimp/Importer.hpp>
 #include<assimp/scene.h>
@@ -111,9 +111,9 @@ public:
 	static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, const aiMesh& mesh)
 	{
 		namespace dx = DirectX;
-		using hw3dexp::VertexLayout; //Vertex.h gets involved 
+		using Dvtx::VertexLayout; //Vertex.h gets involved 
 
-		hw3dexp::VertexBuffer vbuf(std::move(
+		Dvtx::VertexBuffer vbuf(std::move(
 			VertexLayout{}
 			.Append(VertexLayout::Position3D)
 			.Append(VertexLayout::Normal)

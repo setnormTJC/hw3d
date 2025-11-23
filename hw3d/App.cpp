@@ -6,15 +6,11 @@
 #include<random>
 
 #include"AssTest.h"
-#include"Box.h"
 #include"ChiliMath.h"
-#include"Cylinder.h"
 #include"GDIPlusManager.h"
 #include"imgui/imgui.h"
 #include"Sheet.h"
-#include"SkinnedBox.h"
 #include"Surface.h"
-#include "Pyramid.h"
 #include "Vertex.h"
 
 

@@ -1,6 +1,6 @@
 #include "AssTest.h"
 
-#include"BindableBase.h"
+#include"BindableCommon.h"
 #include"GraphicsThrowMacros.h"
 #include"Vertex.h"
 
@@ -21,8 +21,8 @@ AssTest::AssTest(Graphics& gfx, std::mt19937& rng,
 	if (!IsStaticInitialized())
 	{
 
-		using hw3dexp::VertexLayout; 
-		hw3dexp::VertexBuffer vbuf( //NOTE that there is no collision here with the bindable `VertexBuffer`
+		using Dvtx::VertexLayout; 
+		Dvtx::VertexBuffer vbuf( //NOTE that there is no collision here with the bindable `VertexBuffer`
 									//because the namespace is used!
 			std::move(
 				VertexLayout{}

@@ -5,18 +5,11 @@
 #include<type_traits>
 #include<vector> 
 
+#include"Color.h"
 #include"Graphics.h"
 
-namespace hw3dexp
+namespace Dvtx
 {
-	struct BGRAColor
-	{
-		unsigned char a;
-		unsigned char r;
-		unsigned char g;
-		unsigned char b;
-	};
-
 	class VertexLayout
 	{
 	public:
@@ -72,7 +65,7 @@ namespace hw3dexp
 		};
 		template<> struct Map<BGRAColor>
 		{
-			using SysType = hw3dexp::BGRAColor;
+			using SysType = ::BGRAColor; //note the ::!
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 			static constexpr const char* semantic = "Color";
 		};
