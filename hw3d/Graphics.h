@@ -12,12 +12,14 @@
 
 #include "DxgiInfoManager.h"
 
-
-class Bindable; //forward declaration for friendship without #including (circular dependency)
+namespace Bind
+{
+	class Bindable; //forward declaration for friendship without #including (circular dependency)
+}
 
 class Graphics
 {
-	friend class Bindable; 
+	friend class Bind::Bindable; 
 
 public:
 	class Exception : public ChiliException

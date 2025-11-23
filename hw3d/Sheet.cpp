@@ -44,21 +44,21 @@ Sheet::Sheet(Graphics& gfx,
 		model.vertices[2].tex = { 0.0f, 1.0f };
 		model.vertices[3].tex = { 1.0f, 1.0f };
 
-		AddStaticBind(std::make_unique<Texture>(gfx, Surface::FromFile("Images//ramona.png")));
+		AddStaticBind(std::make_unique<Bind::Texture>(gfx, Bind::Surface::FromFile("Images//ramona.png")));
 
-		AddStaticBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
+		AddStaticBind(std::make_unique<Bind::VertexBuffer>(gfx, model.vertices));
 
-		AddStaticBind(std::make_unique<Sampler>(gfx));
+		AddStaticBind(std::make_unique<Bind::Sampler>(gfx));
 
-		auto pvs = std::make_unique<VertexShader>(gfx, L"../x64/Debug/TextureVS.cso");
+		auto pvs = std::make_unique<Bind::VertexShader>(gfx, L"../x64/Debug/TextureVS.cso");
 
 		auto pvsbc = pvs->GetBytecode();
 
 		AddStaticBind(std::move(pvs));
 
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"../x64/Debug/TexturePS.cso"));
+		AddStaticBind(std::make_unique<Bind::PixelShader>(gfx, L"../x64/Debug/TexturePS.cso"));
 
-		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
+		AddStaticIndexBuffer(std::make_unique<Bind::IndexBuffer>(gfx, model.indices));
 
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
 		{
@@ -67,9 +67,9 @@ Sheet::Sheet(Graphics& gfx,
 			//NOTE that "TexCoord" here MUST match the "semantic" that is in the pixel shader!
 		};
 
-		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
+		AddStaticBind(std::make_unique<Bind::InputLayout>(gfx, ied, pvsbc));
 
-		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+		AddStaticBind(std::make_unique<Bind::Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 	}
 
 	else
@@ -77,7 +77,7 @@ Sheet::Sheet(Graphics& gfx,
 		SetIndexFromStatic();
 	}
 
-	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
+	AddBind(std::make_unique<Bind::TransformCbuf>(gfx, *this));
 }
 
 void Sheet::Update(float dt) noexcept

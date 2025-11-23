@@ -4,13 +4,16 @@
 #include"IndexBuffer.h"
 #include<cassert>
 
-void Drawable::Draw(Graphics& gfx) const noexcept(!IS_DEBUG)
+
+using namespace Bind; 
+
+void Drawable::Draw(Graphics& gfx) const noxnd
 {
 	for (auto& b : binds) //instance binds
 	{
-		b->Bind(gfx); 
+		b->Bind(gfx); //polymorphic call
 	}
-
+	
 	for (auto& b : GetStaticBinds())
 	{
 		b->Bind(gfx); 
@@ -19,16 +22,16 @@ void Drawable::Draw(Graphics& gfx) const noexcept(!IS_DEBUG)
 	gfx.DrawIndexed(pIndexBuffer->GetCount());
 }
 
-void Drawable::AddBind(std::unique_ptr<Bindable> bind) noexcept(!IS_DEBUG)
+void Drawable::AddBind(std::unique_ptr<Bind::Bindable> bind) noxnd
 {
 	assert("MUST use AddIndexBuffer to bind  index buffer"
 		&&
-		typeid(*bind) != typeid(IndexBuffer));
+		typeid(*bind) != typeid(Bind::IndexBuffer));
 
 	binds.push_back(std::move(bind)); 
 }
 
-void Drawable::AddIndexBuffer(std::unique_ptr<class IndexBuffer> ibuf) noexcept
+void Drawable::AddIndexBuffer(std::unique_ptr<Bind::IndexBuffer> ibuf) noexcept
 {
 	assert("Attempting to add index buffer a second time" 
 		&& 

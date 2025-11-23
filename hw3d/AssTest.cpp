@@ -33,7 +33,7 @@ AssTest::AssTest(Graphics& gfx, std::mt19937& rng,
 
 
 		Assimp::Importer imp;
-		const auto pModel = imp.ReadFile("models/suzanne.obj",
+		const auto pModel = imp.ReadFile("models/nanosuit.obj",
 			aiProcess_Triangulate | //SHOULD break any quads into triangles 
 
 			aiProcess_JoinIdenticalVertices); //this second param can SUBSTANTIALLY (10x) reduce vertex count
@@ -71,18 +71,18 @@ AssTest::AssTest(Graphics& gfx, std::mt19937& rng,
 			indices.push_back(face.mIndices[2]);
 		}
 
-		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vbuf));
-		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
+		AddStaticBind(std::make_unique<Bind::VertexBuffer>(gfx, vbuf));
+		AddStaticIndexBuffer(std::make_unique<Bind::IndexBuffer>(gfx, indices));
 
-		auto pvs = std::make_unique<VertexShader>(gfx, L"../x64/Debug/PhongVS.cso");
+		auto pvs = std::make_unique<Bind::VertexShader>(gfx, L"../x64/Debug/PhongVS.cso");
 		auto pvsbc = pvs->GetBytecode();
 		AddStaticBind(std::move(pvs));
 
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"../x64/Debug/PhongPS.cso"));
+		AddStaticBind(std::make_unique<Bind::PixelShader>(gfx, L"../x64/Debug/PhongPS.cso"));
 
-		AddStaticBind(std::make_unique<InputLayout>(gfx, vbuf.GetLayout().GetD3DLayout(), pvsbc));
+		AddStaticBind(std::make_unique<Bind::InputLayout>(gfx, vbuf.GetLayout().GetD3DLayout(), pvsbc));
 
-		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+		AddStaticBind(std::make_unique<Bind::Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
 		struct PSMaterialConstant
 		{
@@ -92,14 +92,14 @@ AssTest::AssTest(Graphics& gfx, std::mt19937& rng,
 			float padding[3];
 		} pmc;
 		pmc.color = material;
-		AddStaticBind(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, pmc, 1u));
+		AddStaticBind(std::make_unique<Bind::PixelConstantBuffer<PSMaterialConstant>>(gfx, pmc, 1u));
 	}
 	else
 	{
 		SetIndexFromStatic();
 	}
 
-	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
+	AddBind(std::make_unique<Bind::TransformCbuf>(gfx, *this));
 
 }
 

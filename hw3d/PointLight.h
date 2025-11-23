@@ -31,5 +31,5 @@ private:
 	
 	/*The mesh here is going to act as a "lightbulb" - this makes the light source "obvious"*/
 	mutable SolidSphere mesh; //mutable!!!
-	mutable PixelConstantBuffer<PointLightCBuf> cbuf; //again, mutable!
+	mutable Bind::PixelConstantBuffer<PointLightCBuf> cbuf; //again, mutable!
 };

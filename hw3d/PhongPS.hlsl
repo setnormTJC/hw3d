@@ -1,13 +1,10 @@
-//0123456789a0123456789b0123456789c0123456789d0123456789e0123456789f0123456789g0123456789h0123456789g0123456789h0
 cbuffer LightCBuf //set per frame (slot 0)
 {
     float3 lightPos; 
-    //float3 materialColor = { 0.7f, 0.7f, 0.7f }; //gray
-
     float3 ambient;
     float3 diffuseColor;
+    
     float diffuseIntensity;
-
     float attConst; //attenuation constant 
     float attLin; //linear
     float attQuad ; //quadratic 
@@ -51,7 +48,7 @@ float4 main(float3 worldPos : Position, float3 n : Normal) : SV_Target
     
     
     //final color 
-    return float4(saturate(diffuse + ambient + specular) * materialColor, 1.0f);
+    return float4(saturate((diffuse + ambient + specular) * materialColor), 1.0f);
     //interestingly, "saturate" function clamps output between 0.0f and 1.0f
 
 }

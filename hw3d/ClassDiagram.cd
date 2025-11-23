@@ -10,7 +10,7 @@
       </Struct>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AASIBAAAAAAAAAAAAAAAEIIAEAMAAABAAgAAAAAgAAA=</HashCode>
+      <HashCode>AASIDAAAAAAAAAAAAAAAEIIAEAMAAABAAgAAAAAgAAA=</HashCode>
       <FileName>App.h</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -81,56 +81,49 @@
       <FileName>Window.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Bindable">
+  <Class Name="Bind::Bindable">
     <Position X="9.5" Y="13" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAgAAAAAAAAAAABAAAgAAAAAAAAAgAACAAAAAAAAA=</HashCode>
       <FileName>Bindable.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ConstantBuffer&lt;C&gt;">
+  <Class Name="Bind::ConstantBuffer&lt;C&gt;">
     <Position X="9.25" Y="16" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAwAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAACAAAAAAA=</HashCode>
       <FileName>ConstantBuffers.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="VertexConstantBuffer&lt;C&gt;">
+  <Class Name="Bind::VertexConstantBuffer&lt;C&gt;">
     <Position X="12" Y="19.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ConstantBuffers.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="PixelConstantBuffer&lt;C&gt;">
+  <Class Name="Bind::PixelConstantBuffer&lt;C&gt;">
     <Position X="7.75" Y="19.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ConstantBuffers.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="IndexBuffer">
-    <Position X="7" Y="16" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAQAgAAAAAAAQAAABAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>IndexBuffer.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="InputLayout">
+  <Class Name="Bind::InputLayout">
     <Position X="12.25" Y="16" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAA=</HashCode>
       <FileName>InputLayout.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="PixelShader">
+  <Class Name="Bind::PixelShader">
     <Position X="4.5" Y="16" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAgAAAAAAAACAAAAAAABAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>PixelShader.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Topology">
+  <Class Name="Bind::Topology">
     <Position X="14.75" Y="16" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAABAAAAAAAQAAAAAAA=</HashCode>
@@ -138,13 +131,13 @@
     </TypeIdentifier>
   </Class>
   <Class Name="VertexBuffer">
-    <Position X="0.5" Y="20.5" Width="1.5" />
+    <Position X="1.5" Y="20.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>QAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAEAA=</HashCode>
-      <FileName>VertexBuffer.h</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAQAAAQAAAAA=</HashCode>
+      <FileName>Vertex.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="VertexShader">
+  <Class Name="Bind::VertexShader">
     <Position X="2.5" Y="16" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAEAgAAAAAABAAAAAAAAEAAAAAAAAAAAAAAAABAAAAA=</HashCode>
@@ -156,20 +149,6 @@
     <TypeIdentifier>
       <HashCode>IAQAABAAAAAAQgAABAAABAAAAAQAAAAAgABAAAAAAAI=</HashCode>
       <FileName>Drawable.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Box">
-    <Position X="18.5" Y="20.25" Width="1.5" />
-    <NestedTypes>
-      <Struct Name="Box::PSMaterialConstant" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Box.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Struct>
-    </NestedTypes>
-    <TypeIdentifier>
-      <HashCode>AAAAAAIAAAAAgAAAAAAAAAAAAAIgAAAACAAAAAAAAAA=</HashCode>
-      <FileName>Box.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DrawableBase&lt;T&gt;">
@@ -186,17 +165,10 @@
       <FileName>TestObject.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Cylinder">
-    <Position X="21.25" Y="20.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAA=</HashCode>
-      <FileName>Cylinder.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TransformCbuf">
+  <Class Name="Bind::TransformCbuf">
     <Position X="17.25" Y="16.25" Width="1.5" />
     <NestedTypes>
-      <Struct Name="TransformCbuf::Transforms" Collapsed="true">
+      <Struct Name="Bind::TransformCbuf::Transforms" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>TransformCbuf.h</NewMemberFileName>
         </TypeIdentifier>
@@ -228,53 +200,53 @@
       <FileName>Camera.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="hw3dexp::VertexLayout">
+  <Class Name="Dvtx::VertexLayout">
     <Position X="9.25" Y="22.5" Width="2.25" />
     <Compartments>
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
     <NestedTypes>
-      <Struct Name="hw3dexp::VertexLayout::Map&lt;Float4Color&gt;" Collapsed="true">
+      <Struct Name="Dvtx::VertexLayout::Map&lt;Position3D&gt;" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Vertex.h</NewMemberFileName>
         </TypeIdentifier>
       </Struct>
-      <Struct Name="hw3dexp::VertexLayout::Map&lt;Float3Color&gt;" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Vertex.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Struct>
-      <Class Name="hw3dexp::VertexLayout::Element" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Vertex.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-      <Enum Name="hw3dexp::VertexLayout::ElementType" Collapsed="true">
+      <Enum Name="Dvtx::VertexLayout::ElementType" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Vertex.h</NewMemberFileName>
         </TypeIdentifier>
       </Enum>
-      <Struct Name="hw3dexp::VertexLayout::Map&lt;Position3D&gt;" Collapsed="true">
+      <Struct Name="Dvtx::VertexLayout::Map&lt;Normal&gt;" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Vertex.h</NewMemberFileName>
         </TypeIdentifier>
       </Struct>
-      <Struct Name="hw3dexp::VertexLayout::Map&lt;Position2D&gt;">
+      <Struct Name="Dvtx::VertexLayout::Map&lt;Float4Color&gt;" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Vertex.h</NewMemberFileName>
         </TypeIdentifier>
       </Struct>
-      <Struct Name="hw3dexp::VertexLayout::Map&lt;Texture2D&gt;" Collapsed="true">
+      <Struct Name="Dvtx::VertexLayout::Map&lt;Texture2D&gt;" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Vertex.h</NewMemberFileName>
         </TypeIdentifier>
       </Struct>
-      <Struct Name="hw3dexp::VertexLayout::Map&lt;Normal&gt;" Collapsed="true">
+      <Struct Name="Dvtx::VertexLayout::Map&lt;BGRAColor&gt;" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Vertex.h</NewMemberFileName>
         </TypeIdentifier>
       </Struct>
-      <Struct Name="hw3dexp::VertexLayout::Map&lt;BGRAColor&gt;">
+      <Class Name="Dvtx::VertexLayout::Element" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Vertex.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Struct Name="Dvtx::VertexLayout::Map&lt;Float3Color&gt;" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Vertex.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="Dvtx::VertexLayout::Map&lt;Position2D&gt;" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Vertex.h</NewMemberFileName>
         </TypeIdentifier>
@@ -285,19 +257,47 @@
       <FileName>Vertex.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="hw3dexp::Vertex">
-    <Position X="6.75" Y="22.25" Width="1.5" />
+  <Class Name="Mesh">
+    <Position X="13" Y="23.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAgAAAAAAAAAAAAAEAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Mesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Node">
+    <Position X="16.25" Y="23.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEgAAAgAAAAAAAAAEAAAIAAAAAAEAAAA=</HashCode>
+      <FileName>Mesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model">
+    <Position X="14.75" Y="26.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAgIAIAAAAEAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Mesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Dvtx::Vertex">
+    <Position X="6.25" Y="26" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAgAAAACABAAAAAAAgAAAAAAAAAAAAAAAACQAAAAA=</HashCode>
       <FileName>Vertex.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Struct Name="hw3dexp::BGRAColor">
-    <Position X="7" Y="30.75" Width="1.5" />
+  <Class Name="Dvtx::VertexBuffer">
+    <Position X="4.75" Y="22" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAQABAAAAAAA=</HashCode>
+      <HashCode>AQAAEAAAEAAEgAAAAAAAAAAAQAEAAAAIAABACAAAEAA=</HashCode>
       <FileName>Vertex.h</FileName>
     </TypeIdentifier>
-  </Struct>
+  </Class>
+  <Class Name="Dvtx::ConstVertex">
+    <Position X="3.5" Y="26.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAgAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Vertex.h</FileName>
+    </TypeIdentifier>
+  </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

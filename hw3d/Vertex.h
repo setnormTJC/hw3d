@@ -6,6 +6,7 @@
 #include<vector> 
 
 #include"Color.h"
+#include"ConditionalNoexcept.h"
 #include"Graphics.h"
 
 namespace Dvtx
@@ -73,91 +74,25 @@ namespace Dvtx
 		class Element
 		{
 		public:
-			Element(ElementType type, size_t offset)
-				:
-				type(type),
-				offset(offset)
-			{
-			}
+			Element(ElementType type, size_t offset);
 
-			size_t GetOffsetAfter() const noexcept(!IS_DEBUG)
-			{
-				return offset + Size();
-			}
-			size_t GetOffset() const
-			{
-				return offset;
-			}
+			size_t GetOffsetAfter() const noxnd; 
 
-			size_t Size() const noexcept (!IS_DEBUG)
-			{
-				return SizeOf(type);
-			}
-			static constexpr size_t SizeOf(ElementType type) noexcept (!IS_DEBUG)
-			{
-				using namespace DirectX;
+			size_t GetOffset() const;
 
-				switch (type)
-				{
-				case Position2D:
-					return sizeof(Map<Position2D>::SysType);
+			size_t Size() const noxnd;
 
-				case Position3D:
-					return sizeof(Map<Position3D>::SysType);
+			static constexpr size_t SizeOf(ElementType type) noxnd;
 
-				case Texture2D:
-					return sizeof(Map<Texture2D>::SysType);
-
-				case Normal:
-					return sizeof(Map<Normal>::SysType);
-
-				case Float3Color:
-					return sizeof(Map<Float3Color>::SysType);
-
-				case Float4Color:
-					return sizeof(Map<BGRAColor>::SysType);
-
-				case BGRAColor:
-					return sizeof(unsigned int);
-				}
-
-				assert("Invalid element type" && false);
-				return 0u;
-			}
-			ElementType GetType() const noexcept
-			{
-				return type;
-			}
+			ElementType GetType() const noexcept;
 
 			/*Gets a single layout element's description*/
-			D3D11_INPUT_ELEMENT_DESC GetDesc() const noexcept(!IS_DEBUG)
-			{
-				switch (type)
-				{
-				case Position2D:
-					return GenerateDesc<Position2D>(GetOffset());
-				case Position3D:
-					return GenerateDesc<Position3D>(GetOffset());
-				case Texture2D:
-					return GenerateDesc<Texture2D>(GetOffset());
-				case Normal:
-					return GenerateDesc<Normal>(GetOffset());
-				case Float3Color:
-					return GenerateDesc<Float3Color>(GetOffset());
-				case Float4Color:
-					return GenerateDesc<Float4Color>(GetOffset());
-				case BGRAColor:
-					return GenerateDesc<BGRAColor>(GetOffset());
-				}
-				assert("Invalid element type" && false);
-				return { "INVALID",0,DXGI_FORMAT_UNKNOWN,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 };
-			}
-
+			D3D11_INPUT_ELEMENT_DESC GetDesc() const noxnd;
 
 		private:
 			/*Helper called by GetDesc*/
 			template<ElementType type>
-			static constexpr D3D11_INPUT_ELEMENT_DESC GenerateDesc(size_t offset) noexcept(!IS_DEBUG)
+			static constexpr D3D11_INPUT_ELEMENT_DESC GenerateDesc(size_t offset) noxnd
 			{
 				return { Map<type>::semantic,0,Map<type>::dxgiFormat,0,(UINT)offset,D3D11_INPUT_PER_VERTEX_DATA,0 };
 			}
@@ -170,7 +105,7 @@ namespace Dvtx
 
 	public:
 		template<ElementType Type>
-		const Element& Resolve() const noexcept (!IS_DEBUG)
+		const Element& Resolve() const noxnd
 		{
 			for (auto& e : elements)
 			{
@@ -182,45 +117,22 @@ namespace Dvtx
 			assert("Could not resolve element type" && false);
 			return elements.front();
 		}
-		const Element& ResolveByIndex(size_t i) const noexcept(!IS_DEBUG)
-		{
-			return elements[i];
-		}
+		const Element& ResolveByIndex(size_t i) const noxnd;
 
-		VertexLayout& Append(ElementType type) noexcept (!IS_DEBUG)
-		{
-			elements.emplace_back(type, Size());
-			return *this;
-		}
+		VertexLayout& Append(ElementType type) noxnd;
+
 		/* @returns the size of a SINGLE vertex*/
-		size_t Size() const noexcept(!IS_DEBUG)
-		{
-			return elements.empty() ? 0u : elements.back().GetOffsetAfter();
-		}
-		size_t GetElementCount() const noexcept
-		{
-			return elements.size();
-		}
+		size_t Size() const noxnd;
 
-		std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const noexcept(!IS_DEBUG)
-		{
-			std::vector<D3D11_INPUT_ELEMENT_DESC> desc; 
+		size_t GetElementCount() const noexcept;
 
-			desc.reserve(GetElementCount());
-			
-			for (const auto& e : elements)
-			{
-				desc.push_back(e.GetDesc());
-			}
+		std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const noxnd;
 
-			return desc; 
-		}
 	private:
 		std::vector<Element> elements;
 
 	};
 
-	/*This Vertex is a "view type" (a "proxy")*/
 	class Vertex
 	{
 		friend class VertexBuffer;
@@ -238,7 +150,7 @@ namespace Dvtx
 
 		/*@param val - this will be source (Src) in `SetAttribute`*/
 		template<typename T>
-		void SetAttributeByIndex(size_t i, T&& val) noexcept(!IS_DEBUG) //&& enables "perfect forwarding"
+		void SetAttributeByIndex(size_t i, T&& val) noxnd //&& enables "perfect forwarding"
 		{
 			using namespace DirectX;
 			const auto& element = layout.ResolveByIndex(i);
@@ -272,17 +184,11 @@ namespace Dvtx
 		}
 
 	protected:
-		Vertex(char* pData, const VertexLayout& layout) noexcept(!IS_DEBUG)
-			:
-			pData(pData),
-			layout(layout)
-		{
-			assert(pData != nullptr);
-		}
+		Vertex(char* pData, const VertexLayout& layout) noxnd;
 
 	private:
 		template<typename First, typename ...Rest>
-		void SetAttributeByIndex(size_t i, First&& first, Rest&&... rest) noexcept(!IS_DEBUG)
+		void SetAttributeByIndex(size_t i, First&& first, Rest&&... rest) noxnd
 		{
 			SetAttributeByIndex(i, std::forward<First>(first));
 			SetAttributeByIndex(i + 1, std::forward<Rest>(rest)...); //when i = 1, base case is hit and
@@ -290,7 +196,7 @@ namespace Dvtx
 		}
 
 		template<VertexLayout::ElementType DestLayoutType, typename SrcType>
-		void SetAttribute(char* pAttribute, SrcType&& val) noexcept(!IS_DEBUG)
+		void SetAttribute(char* pAttribute, SrcType&& val) noxnd
 		{
 			using Dest = typename VertexLayout::Map<DestLayoutType>::SysType;
 			if constexpr (std::is_assignable<Dest, SrcType>::value)
@@ -312,13 +218,10 @@ namespace Dvtx
 	class ConstVertex
 	{
 	public:
-		ConstVertex(const Vertex& v) noexcept (!IS_DEBUG)
-			:
-			vertex(v)
-		{
-		}
+		ConstVertex(const Vertex& v) noxnd;
+
 		template<VertexLayout::ElementType Type>
-		const auto& Attr() const noexcept (!IS_DEBUG)
+		const auto& Attr() const noxnd
 		{
 			return const_cast<Vertex&>(vertex).Attr<Type>();
 		}
@@ -330,38 +233,24 @@ namespace Dvtx
 	class VertexBuffer
 	{
 	public:
-		VertexBuffer(VertexLayout layout) noexcept(!IS_DEBUG)
-			:
-			layout(std::move(layout))
-		{
-		}
+		VertexBuffer(VertexLayout layout) noxnd;
 
-		const char* GetData() const noexcept(!IS_DEBUG)
-		{
-			return buffer.data(); 
-		}
+		const char* GetData() const noxnd;
 		
-		/*@returns the size, in bytes, of the entire vertex buffer*/
-		size_t SizeBytes() const noexcept(!IS_DEBUG)
-		{
-			return buffer.size(); 
-		}
+		const VertexLayout& GetLayout() const noexcept;
 
-		const VertexLayout& GetLayout() const noexcept
-		{
-			return layout;
-		}
 		//Size is in VERTICES (not bytes) 
-		size_t Size() const noexcept (!IS_DEBUG)
-		{
-			return buffer.size() / layout.Size(); //?
-		}
+		size_t Size() const noxnd;
+
+		/*@returns the size, in bytes, of the entire vertex buffer*/
+		size_t SizeBytes() const noxnd;
+
 		//accepts ANY number of args of ANY type!
 		//This is template recursion
 		//It will allow Vertex structs of various sizes
 		//ex: ONLY a position component versus a position component, surface normal, and texture 
 		template<typename ...Params>
-		void EmplaceBack(Params&&... params) noexcept (!IS_DEBUG)
+		void EmplaceBack(Params&&... params) noxnd
 		{
 			assert(sizeof...(params) == layout.GetElementCount() &&
 				"param count doesn't match number of elements in layout");
@@ -369,39 +258,19 @@ namespace Dvtx
 			buffer.resize(buffer.size() + layout.Size());
 			Back().SetAttributeByIndex(0u, std::forward<Params>(params)...);
 		}
-		Vertex Back() noexcept (!IS_DEBUG)
-		{
-			assert(buffer.size() != 0u);
-			return Vertex{ buffer.data() + buffer.size() - layout.Size(), layout }; //calcs here? 
-		}
-		Vertex Front() noexcept (!IS_DEBUG)
-		{
-			assert(buffer.size() != 0u);
-			return Vertex{ buffer.data(), layout };
-		}
 
-		Vertex operator[] (size_t i) noexcept (!IS_DEBUG)
-		{
-			assert(i < Size());
-			return Vertex{ buffer.data() + layout.Size() * i, layout }; //also, calcs here? 
-		}
+		Vertex Back() noxnd;
+
+		Vertex Front() noxnd;
+
+		Vertex operator[] (size_t i) noxnd;
 
 		/*Const overloads of the 3 above*/
-		ConstVertex Back() const noexcept (!IS_DEBUG)
-		{
-			return const_cast<VertexBuffer*>(this)->Back();
-		}
+		ConstVertex Back() const noxnd;
 
-		ConstVertex Front() const noexcept (!IS_DEBUG)
-		{
-			return const_cast<VertexBuffer*>(this)->Front();
-		}
+		ConstVertex Front() const noxnd;
 
-		ConstVertex operator[] (size_t i) const noexcept (!IS_DEBUG)
-		{
-			//assert(i < Size());
-			return const_cast<VertexBuffer&>(*this)[i];
-		}
+		ConstVertex operator[] (size_t i) const noxnd;
 
 	private:
 		std::vector<char> buffer; //byte representation of all vertices
