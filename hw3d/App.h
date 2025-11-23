@@ -4,6 +4,7 @@
 #include "ChiliTimer.h"
 #include"Drawable.h"
 #include"ImguiManager.h"
+#include"Model.h"
 #include"PointLight.h"
 #include "Window.h"
 
@@ -22,28 +23,30 @@ public:
 	~App();
 private:
 	void DoFrame();
-	void SpawnSimulationWindow() noexcept; /*sim SPEED, that is*/
-	void SpawnBoxWindowManagerWindow() noexcept; 
-	void SpawnBoxWindows() noexcept; 
+	void ShowModelWindow(); 
 private:
 	ImguiManager imgui;
 	Window wnd;
 	ChiliTimer timer;
-	std::vector<std::unique_ptr<Drawable>> drawables;
-	
-	static constexpr size_t nDrawables = 100;
 
 	/*Adjusting an ImGui slider modifies this*/
 	float speed_factor = 1.0f;
-	
-	Camera cam; 
-	PointLight light; 
+
+	Camera cam;
+	PointLight light;
 
 	std::vector<class Box*> boxes; //allows for varying optical properties of box
 	/*Note that `boxes` ARE a subset of `drawables`*/
 
-	std::optional<int> comboBoxIndex; //commonly known as a "dropdown list" 
-	std::set<int> boxControlIds; 
+	Model nano{ wnd.Gfx() , "Models\\nanosuit.obj"};
 
-
+	struct
+	{
+		float roll = 0.0f; 
+		float pitch = 0.0f; 
+		float yaw = 0.0f; 
+		float x = 0.0f; 
+		float y = 0.0f; 
+		float z = 0.0f; 
+	} pos;
 };
