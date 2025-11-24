@@ -1,5 +1,36 @@
 #include "Mesh.h"
 
+#include"imgui/imgui.h"
+#include <sstream>
+#include<unordered_map>
+
+ModelException::ModelException(int line, const char* file, std::string note) noexcept
+	:
+	ChiliException(line, file),
+	note(std::move(note))
+{
+}
+
+const char* ModelException::what() const noexcept
+{
+	std::ostringstream oss;
+	oss << ChiliException::what() << std::endl
+		<< "[Note] " << GetNote();
+	whatBuffer = oss.str();
+	return whatBuffer.c_str();
+}
+
+const char* ModelException::GetType() const noexcept
+{
+	return "Chili Model Exception";
+}
+
+const std::string& ModelException::GetNote() const noexcept
+{
+	return note;
+}
+
+
 
 #pragma region Mesh
 Mesh::Mesh(Graphics& gfx, std::vector<std::unique_ptr<Bind::Bindable>> bindPtrs)
@@ -40,15 +71,21 @@ DirectX::XMMATRIX Mesh::GetTransformXM() const noexcept
 
 #pragma region Node
 
-Node::Node(std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform) noexcept(!IS_DEBUG)
-	:meshPtrs(std::move(meshPtrs))
+Node::Node(const std::string& name, std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform_in) noexcept(!IS_DEBUG)
+	:
+	meshPtrs(std::move(meshPtrs)), 
+	name(name)
 {
-	DirectX::XMStoreFloat4x4(&this->transform, transform);
+
+	DirectX::XMStoreFloat4x4(&transform, transform_in);
+	DirectX::XMStoreFloat4x4(&appliedTransform, DirectX::XMMatrixIdentity());
 }
 
 void Node::Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept(!IS_DEBUG)
 {
-	const auto built = DirectX::XMLoadFloat4x4(&transform) * accumulatedTransform;
+	const auto built = DirectX::XMLoadFloat4x4(&appliedTransform) *
+		DirectX::XMLoadFloat4x4(&transform) * 
+		accumulatedTransform;
 
 	for (const auto pm : meshPtrs) //pointer to mesh (pm)
 	{
@@ -60,6 +97,43 @@ void Node::Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const no
 	}
 }
 
+void Node::SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept
+{
+	DirectX::XMStoreFloat4x4(&appliedTransform, transform); 
+}
+
+void Node::ShowTree(int& nodeIndexTracked, std::optional<int>& selectedIndex, Node*& pSelectedNode) const noexcept
+{
+
+	const int currentNodeIndex = nodeIndexTracked; 
+	nodeIndexTracked++; 
+
+	const auto node_flags = ImGuiTreeNodeFlags_OpenOnArrow
+		| ((currentNodeIndex == selectedIndex.value_or(-1)) ? ImGuiTreeNodeFlags_Selected : 0)
+		| ((childPtrs.size() == 0) ? ImGuiTreeNodeFlags_Leaf : 0);
+
+	const auto expanded = ImGui::TreeNodeEx(
+		(void*)(intptr_t)currentNodeIndex, node_flags, name.c_str());
+
+
+	if (ImGui::IsItemClicked())
+	{
+		selectedIndex = currentNodeIndex;
+		pSelectedNode = const_cast<Node*>(this); 
+	}
+
+	if (expanded)
+	{
+		for (const auto& pChild : childPtrs)
+		{
+			pChild->ShowTree(nodeIndexTracked, selectedIndex, pSelectedNode); 
+		}
+	
+		ImGui::TreePop(); //pop the function call stack, mayhap
+	}
+	
+}
+
 void Node::AddChild(std::unique_ptr<Node> pChild) noexcept(!IS_DEBUG)
 {
 	assert(pChild);
@@ -69,14 +143,93 @@ void Node::AddChild(std::unique_ptr<Node> pChild) noexcept(!IS_DEBUG)
 
 #pragma endregion
 
+#pragma region ModelWindow
+/*An example of a "pimpl" idiom*/
+class ModelWindow
+{
+public:
+
+	void Show(const char* windowName, const Node& root)
+	{
+		windowName = windowName ? windowName : "Model";
+
+		int nodeIndexTracker = 0; 
+
+		if (ImGui::Begin(windowName))
+		{
+			ImGui::Columns(2, nullptr, true);
+			root.ShowTree(nodeIndexTracker, selectedIndex, pSelectedNode);
+
+			ImGui::NextColumn();
+
+			if (pSelectedNode != nullptr)
+			{
+				auto& transform = transforms[*selectedIndex];
+
+				ImGui::Text("Orientation");
+				ImGui::SliderAngle("Roll", &transform.roll, -180.0f, 180.0f);
+				ImGui::SliderAngle("Pitch", &transform.pitch, -180.0f, 180.0f);
+				ImGui::SliderAngle("Yaw", &transform.yaw, -180.0f, 180.0f);
+				ImGui::Text("Position");
+				ImGui::SliderFloat("X", &transform.x, -20.0f, 20.0f);
+				ImGui::SliderFloat("Y", &transform.y, -20.0f, 20.0f);
+				ImGui::SliderFloat("Z", &transform.z, -20.0f, 20.0f);
+
+			}
+
+		}
+		ImGui::End();
+	}
+	
+	Node* GetSelectedNode() const noexcept
+	{
+		return pSelectedNode;
+	}
+	DirectX::XMMATRIX GetTransform() const noexcept
+	{
+		const auto& transform = transforms.at(*selectedIndex);
+		return
+			DirectX::XMMatrixRotationRollPitchYaw(transform.roll, transform.pitch, transform.yaw) *
+			DirectX::XMMatrixTranslation(transform.x, transform.y, transform.z);
+	}
+
+
+private:
+	std::optional<int> selectedIndex; 
+	
+	Node* pSelectedNode; 
+
+	struct TransformParameters
+	{
+		float roll = 0.0f;
+		float pitch = 0.0f;
+		float yaw = 0.0f;
+		float x = 0.0f;
+		float y = 0.0f;
+		float z = 0.0f;
+	}; 
+	/*Maps indices to transform parameter structs*/
+	std::unordered_map<int, TransformParameters> transforms; 
+};
+#pragma endregion
 
 #pragma region Model
 Model::Model(Graphics& gfx, const std::string filename)
+	:
+	pWindow(std::make_unique<ModelWindow>())
 {
 	Assimp::Importer imp;
 	const auto pScene = imp.ReadFile(filename.c_str(),
 		aiProcess_Triangulate |
-		aiProcess_JoinIdenticalVertices);
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_ConvertToLeftHanded | //note the syntax color! deprecated!
+		aiProcess_GenNormals
+	);
+
+	if (pScene == nullptr)
+	{
+		throw ModelException(__LINE__, __FILE__, imp.GetErrorString());
+	}
 
 	for (size_t i = 0; i < pScene->mNumMeshes; ++i)
 	{
@@ -87,9 +240,22 @@ Model::Model(Graphics& gfx, const std::string filename)
 
 }
 
-void Model::Draw(Graphics& gfx, DirectX::FXMMATRIX transform) const
+void Model::Draw(Graphics& gfx) const noxnd
 {
-	pRoot->Draw(gfx, transform);
+	if (auto node = pWindow->GetSelectedNode())
+	{
+		node->SetAppliedTransform(pWindow->GetTransform());
+	}
+	pRoot->Draw(gfx, DirectX::XMMatrixIdentity());
+}
+
+void Model::ShowWindow(const char* windowName) noexcept
+{
+	pWindow->Show(windowName, *pRoot);
+}
+
+Model::~Model() noexcept
+{
 }
 
 
@@ -169,7 +335,8 @@ std::unique_ptr<Node> Model::ParseNode(const aiNode& node)
 		//and multiple nodes can own the same mesh
 	}
 
-	auto pNode = std::make_unique<Node>(std::move(curMeshPtrs), transform);
+	auto pNode = std::make_unique<Node>(node.mName.C_Str(), std::move(curMeshPtrs), transform);
+	//NOTE the CAPITAL C in C_Str() from assimp
 	for (size_t i = 0; i < node.mNumChildren; ++i)
 	{
 		pNode->AddChild(ParseNode(*node.mChildren[i])); //recursive call!
@@ -180,3 +347,4 @@ std::unique_ptr<Node> Model::ParseNode(const aiNode& node)
 
 
 #pragma endregion 
+

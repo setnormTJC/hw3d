@@ -16,7 +16,7 @@ namespace Bind
 		static ID3D11DeviceContext* GetContext(Graphics& gfx) noexcept;
 		static ID3D11Device* GetDevice(Graphics& gfx) noexcept;
 		/*Related to the "INFOMAN" macro defined in "GraphicsThrowMacros.h"*/
-		static DxgiInfoManager& GetInfoManager(Graphics& gfx) noexcept(!(IS_DEBUG));
+		static DxgiInfoManager& GetInfoManager(Graphics& gfx);
 
 	};
 }

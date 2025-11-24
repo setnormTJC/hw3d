@@ -8,9 +8,23 @@
 #include<assimp/Importer.hpp>
 #include<assimp/scene.h>
 #include<assimp/postprocess.h>
-
-
 #include<memory>
+#include<optional>
+
+
+class ModelException : public ChiliException
+{
+public:
+	ModelException(int line, const char* file, std::string note) noexcept;
+	const char* what() const noexcept override;
+	const char* GetType() const noexcept override;
+	const std::string& GetNote() const noexcept;
+private:
+	std::string note;
+};
+
+
+
 
 class Mesh : public DrawableBase<Mesh>
 {
@@ -32,27 +46,35 @@ private:
 class Node
 {
 	friend class Model; 
+	friend class ModelWindow;
 
 public: 
-	Node(std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform) noxnd;
+	Node(const std::string& name, std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform_in) noxnd;
 	/*Node's Draw calls Mesh::Draw*/
 	void Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noxnd;
+	void SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept;
 private: 
 	/*Only called by Model (a friend of this class)*/
 	void AddChild(std::unique_ptr<Node> pChild) noxnd;
+	void ShowTree(int& nodeIndexTracked, std::optional<int>& selectedIndex, Node*& pSelectedNode) const noexcept;
 private: 
+	std::string name; //ex: arm or head of some model (stored in .obj file) 
 	std::vector<std::unique_ptr<Node>> childPtrs; 
 	std::vector<Mesh*> meshPtrs; 
 	DirectX::XMFLOAT4X4 transform;
+	DirectX::XMFLOAT4X4 appliedTransform;
 };
+
+
 
 class Model
 {
 public: 
 	Model(Graphics& gfx, const std::string filename);
 	/*Model's Draw calls Node::Draw*/
-	void Draw(Graphics& gfx, DirectX::FXMMATRIX transform) const;
-
+	void Draw(Graphics& gfx) const noxnd;
+	void ShowWindow(const char* windowName = nullptr) noexcept;
+	~Model() noexcept; 
 private: 
 	/*WORKHORSE that binds:
 	1) vertex buffer
@@ -69,4 +91,7 @@ private:
 	std::unique_ptr<Node> pRoot; 
 	std::vector<std::unique_ptr<Mesh>> meshPtrs; //same member var as in Node - but SMART this time
 												//(see comment in `ParseNode` for more details on why)
+
+	std::unique_ptr<class ModelWindow> pWindow; //yet another one
+
 };

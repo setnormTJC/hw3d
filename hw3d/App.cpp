@@ -5,11 +5,9 @@
 #include <algorithm>
 #include<random>
 
-#include"AssTest.h"
 #include"ChiliMath.h"
 #include"GDIPlusManager.h"
 #include"imgui/imgui.h"
-#include"Sheet.h"
 #include"Surface.h"
 #include "Vertex.h"
 
@@ -18,7 +16,7 @@ GDIPlusManager gdipm; //GLOBAL var here!
 
 App::App()
 	:
-	wnd(1200, 900, "The Window title"), //previously 800 x 600
+	wnd(1333, 1000, "The Window title"), //previously 800 x 600
 	//wnd(wnd.Gfx().getScreenWidthAndHeight().first, wnd.Gfx().getScreenWidthAndHeight().second,
 	//	"The Window title"), 
 	light(wnd.Gfx())
@@ -27,7 +25,8 @@ App::App()
 
 
 	//hardcoded initial perspective matrix params: 
-	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
+	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 1000.f/1333.f, 0.5f, 40.0f));
+	//Note that the second param here MUST match the params in wnd() above!
 	
 	//wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1440.0f/2560.0f, 1.0f, 0.5f, 40.0f));
 	
@@ -60,41 +59,19 @@ void App::DoFrame()
 	light.Bind(wnd.Gfx(), wnd.Gfx().GetCamera()); 
 
 	namespace dx = DirectX; 
-	const auto transform = dx::XMMatrixRotationRollPitchYaw(pos.roll, pos.pitch, pos.yaw) *
-		dx::XMMatrixTranslation(pos.x, pos.y, pos.z);
 
-	nano.Draw(wnd.Gfx(), transform);
+	nano.Draw(wnd.Gfx());
 
 	light.Draw(wnd.Gfx()); 
-
 	cam.SpawnControlWindow();
 	light.SpawnControlWindow(); 
 
-	ShowModelWindow(); 
-
+	nano.ShowWindow("nanosuit");
 
 	wnd.Gfx().EndFrame();
 
 }
 
-void App::ShowModelWindow()
-{
-	if (ImGui::Begin("Model"))
-	{
-		using namespace std::string_literals;
-
-		ImGui::Text("Orientation");
-		ImGui::SliderAngle("Roll", &pos.roll, -180.0f, 180.0f);
-		ImGui::SliderAngle("Pitch", &pos.pitch, -180.0f, 180.0f);
-		ImGui::SliderAngle("Yaw", &pos.yaw, -180.0f, 180.0f);
-
-		ImGui::Text("Position");
-		ImGui::SliderFloat("X", &pos.x, -20.0f, 20.0f);
-		ImGui::SliderFloat("Y", &pos.y, -20.0f, 20.0f);
-		ImGui::SliderFloat("Z", &pos.z, -20.0f, 20.0f);
-	}
-	ImGui::End();
-}
 
 
 

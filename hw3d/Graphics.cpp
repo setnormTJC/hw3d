@@ -17,11 +17,11 @@ namespace dx = DirectX;
 
 
 
-Graphics::Graphics(HWND hWnd)
+Graphics::Graphics(HWND hWnd, int width, int height)
 {
 	DXGI_SWAP_CHAIN_DESC sd = {};
-	sd.BufferDesc.Width = 0;
-	sd.BufferDesc.Height = 0; //?
+	sd.BufferDesc.Width = width;
+	sd.BufferDesc.Height = height; 
 	sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	sd.BufferDesc.RefreshRate.Numerator = 0;
 	sd.BufferDesc.RefreshRate.Denominator = 0;
@@ -81,8 +81,8 @@ Graphics::Graphics(HWND hWnd)
 
 	wrl::ComPtr<ID3D11Texture2D> pDepthStencil; 
 	D3D11_TEXTURE2D_DESC descDepth = {}; 
-	descDepth.Width = 1200u; //needs to match the swap chain width and height 
-	descDepth.Height = 900u; 
+	descDepth.Width = width; //MUST match the swap chain width and height above 
+	descDepth.Height = height; 
 	//descDepth.Width = getScreenWidthAndHeight().first; 
 	//descDepth.Height = getScreenWidthAndHeight().second; 
 
@@ -107,8 +107,8 @@ Graphics::Graphics(HWND hWnd)
 
 	// configure viewport
 	D3D11_VIEWPORT vp;
-	vp.Width = 1200;
-	vp.Height = 900;
+	vp.Width = (float)width;
+	vp.Height = (float)height;
 	//vp.Width = getScreenWidthAndHeight().first; 
 	//vp.Height = getScreenWidthAndHeight().second; 
 
