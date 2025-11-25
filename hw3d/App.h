@@ -22,8 +22,10 @@ public:
 	~App();
 private:
 	void DoFrame();
-
+	void ShowRawInputWindow(); 
 private:
+	int x = 0, y = 0; 
+
 	ImguiManager imgui;
 	Window wnd;
 	ChiliTimer timer;
@@ -39,6 +41,6 @@ private:
 
 	//Model nano{ wnd.Gfx() , "Models\\nanosuit.obj"};
 
-	Model nano{ wnd.Gfx() , "Models\\nano.gltf" };
+	Model nano{ wnd.Gfx() , "Models\\nano_hierarchy.gltf" };
 
 };

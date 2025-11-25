@@ -108,7 +108,20 @@ Window::Window(int width, int height, const char* name)
 
 	// create graphics object
 	pGfx = std::make_unique<Graphics>(hWnd, width, height);
+
+
+	//register raw mouse input device: 
+	RAWINPUTDEVICE rid; 
+	rid.usUsagePage = 0x01; //mouse "page" 
+	rid.usUsage = 0x02; //mouse usage
+	rid.dwFlags = 0; 
+	rid.hwndTarget = nullptr; 
+	if (RegisterRawInputDevices(&rid, 1, sizeof(rid)) == FALSE)
+	{
+		throw CHWND_LAST_EXCEPT(); 
+	}
 }
+
 
 Window::~Window()
 {
@@ -123,6 +136,22 @@ void Window::SetTitle(const std::string& title)
 	{
 		throw CHWND_LAST_EXCEPT();
 	}
+}
+
+void Window::EnableCursor() noexcept
+{
+	cursorEnabled = true; 
+	ShowCursor(); 
+	EnableImGuiMouse(); 
+	FreeCursor(); 
+}
+
+void Window::DisableCursor() noexcept
+{
+	cursorEnabled = false; 
+	HideCursor(); 
+	DisableImGuiMouse(); 
+	ConfineCursor(); 
 }
 
 std::optional<int> Window::ProcessMessages() noexcept
@@ -205,6 +234,24 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		kbd.ClearState();
 		break;
 
+	case WM_ACTIVATE:
+		//OutputDebugStringA("activate\n");
+		if (!cursorEnabled)
+		{
+			if (wParam & WA_ACTIVE || wParam & WA_CLICKACTIVE)
+			{
+				//OutputDebugStringA("activate -> confine cursor\n");
+				ConfineCursor(); 
+				HideCursor(); 
+			}
+			else
+			{
+				//OutputDebugStringA("activate -> free cursor\n");
+				FreeCursor(); 
+				ShowCursor(); 
+			}
+		}
+
 		/*********** KEYBOARD MESSAGES ***********/
 	case WM_KEYDOWN:
 		// syskey commands need to be handled to track ALT key (VK_MENU) and F10
@@ -240,12 +287,24 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		/************* MOUSE MESSAGES ****************/
 	case WM_MOUSEMOVE:
 	{
+		const POINTS pt = MAKEPOINTS(lParam);
+		
 		if (imio.WantCaptureMouse)
 		{
 			break; //let imgui take precedence 
 		}
 
-		const POINTS pt = MAKEPOINTS(lParam);
+		if (!cursorEnabled)
+		{
+			if (!mouse.IsInWindow())
+			{
+				SetCapture(hWnd);
+				mouse.OnMouseEnter();
+				HideCursor();
+			}
+			break;
+		}
+
 		// in client region -> log move, and log enter + capture mouse (if not previously in window)
 		if (pt.x >= 0 && pt.x < width && pt.y >= 0 && pt.y < height)
 		{
@@ -316,13 +375,98 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		break;
 	}
 	/************** END MOUSE MESSAGES **************/
-	}
+	/*****************RAW MOUSE MESSAGE*************/
+	case WM_INPUT:
+	{
+		if (!mouse.RawEnabled())
+		{
+			break;
+		}
+
+		UINT size; 
+		//get "size" of data (not sure what this means - number of clicks or pixels moved?)
+		if (GetRawInputData(
+			reinterpret_cast<HRAWINPUT>(lParam),
+			RID_INPUT,
+			nullptr,
+			&size, //fills size with number of bytes for the raw input
+			sizeof(RAWINPUTHEADER)
+		) == -1)
+		{
+			break; 
+		}
+		rawBuffer.resize(size); 
+
+		//reading data
+		if (GetRawInputData(
+			reinterpret_cast<HRAWINPUT>(lParam),
+			RID_INPUT,
+			rawBuffer.data(), //here is where the data gets stored 
+			&size,
+			sizeof(RAWINPUTHEADER)) != size)
+		{
+			break;
+		}
+
+		//processing input data
+		auto& ri = reinterpret_cast<const RAWINPUT&>(*rawBuffer.data());
+		//RAWINPUT type is composed of a header and data (which are also C-structs)
+		if (ri.header.dwType == RIM_TYPEMOUSE &&
+			(ri.data.mouse.lLastX != 0 || ri.data.mouse.lLastY != 0))
+		{
+			//NOTE that the `mouse` here is (obviously) not the same as ri.data.mouse ...
+			mouse.OnRawDelta(ri.data.mouse.lLastX, ri.data.mouse.lLastY);
+		}
+		break;
+
+	}//end case WM_INPUT
+	}//end switch (msg)
+
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
+void Window::ConfineCursor() noexcept
+{
+	RECT rect; 
+	GetClientRect(hWnd, &rect); 
+	MapWindowPoints(hWnd, nullptr, reinterpret_cast<POINT*>(&rect), 2);
+	
+	ClipCursor(&rect); //not a great name, imo, but this prevents cursor from leaving window of this app
+}
 
-// Window Exception Stuff
+void Window::FreeCursor() noexcept
+{
+	ClipCursor(nullptr); 
+}
+
+void Window::HideCursor() noexcept
+{
+	while (::ShowCursor(FALSE) >= 0); //radical
+}
+
+void Window::ShowCursor() noexcept
+{
+	while (::ShowCursor(TRUE) < 0);
+}
+
+void Window::EnableImGuiMouse() noexcept
+{
+	ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse; //Note the bitwise NOT (~) and AND here
+}
+
+void Window::DisableImGuiMouse() noexcept
+{
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse; //bitwise OR toggle here
+}
+
+bool Window::CursorEnabled() noexcept
+{
+	return cursorEnabled;
+}
+
+
+#pragma region Window Exception Stuff
 std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
 {
 	char* pMsgBuf = nullptr;
@@ -385,3 +529,5 @@ const char* Window::NoGfxException::GetType() const noexcept
 {
 	return "Chili Window Exception [No Graphics]";
 }
+
+#pragma endregion

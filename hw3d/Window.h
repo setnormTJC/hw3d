@@ -56,7 +56,7 @@ public:
 private:
 
 	// singleton manages registration/cleanup of window class
-	class WindowClass
+	class WindowClass //a class called "WindowClass" INSIDE the ... Window class...
 	{
 	public:
 		static const char* GetName() noexcept;
@@ -70,28 +70,51 @@ private:
 		static WindowClass wndClass;
 		HINSTANCE hInst;
 	};
+
+	/**************************FUNCS**************************************/
 public:
 	Window(int width, int height, const char* name);
-	void setWidthAndHeight(); 
 	~Window();
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
 	void SetTitle(const std::string& title);
+	
+	void EnableCursor() noexcept; 
+	void DisableCursor() noexcept;
+
+	bool CursorEnabled() noexcept; 
+
 	static std::optional<int> ProcessMessages() noexcept;
 	Graphics& Gfx();
+
+
 private:
 	static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 
+	void ConfineCursor() noexcept; 
+	void FreeCursor() noexcept; 
+
+	void HideCursor() noexcept;
+	void ShowCursor() noexcept;
+
+	void EnableImGuiMouse() noexcept;
+	void DisableImGuiMouse() noexcept;
+
+
+/**************************VARS**************************************/
 public:
 	Keyboard kbd;
 	Mouse mouse;
 private:
+	bool cursorEnabled = false; 
+
 	int width;
 	int height;
 	HWND hWnd;
 	std::unique_ptr<Graphics> pGfx;
+	std::vector<BYTE> rawBuffer; /*BYTE is alias for unsigned char*/
 };
 
 

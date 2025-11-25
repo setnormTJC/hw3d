@@ -43,7 +43,7 @@ void PointLight::Reset() noexcept
 {
 	cbData =
 	{
-		{0.0f, 0.0f, 0.0f}, //pos
+		{1.5f, 14.0f, -4.5f}, //pos
 		{0.05f,0.05f,0.05f}, //ambient color
 		{1.0f, 1.0f, 1.0f}, //diffuse color
 		1.0f, //diffuse intensity

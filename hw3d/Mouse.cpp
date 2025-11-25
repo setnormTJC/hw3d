@@ -21,6 +21,32 @@
 #include "ChiliWin.h"
 #include "Mouse.h"
 
+std::optional<Mouse::RawDelta> Mouse::ReadRawDelta() noexcept
+{
+	if (rawDeltaBuffer.empty())
+	{
+		return std::nullopt;
+	}
+	const RawDelta d = rawDeltaBuffer.front(); 
+	rawDeltaBuffer.pop(); 
+	return d; 
+}
+
+void Mouse::EnableRaw() noexcept
+{
+	rawEnabled = true; 
+}
+
+void Mouse::DisableRaw() noexcept
+{
+	rawEnabled = false; 
+}
+
+bool Mouse::RawEnabled() const noexcept
+{
+	return rawEnabled;
+}
+
 std::pair<int, int> Mouse::GetPos() const noexcept
 {
 	return { x,y };
@@ -90,6 +116,13 @@ void Mouse::OnMouseEnter() noexcept
 	TrimBuffer();
 }
 
+void Mouse::OnRawDelta(int dx, int dy) noexcept
+{
+	rawDeltaBuffer.push({ dx, dy });
+
+	TrimRawInputBuffer(); //Chili commit has TrimBuffer here ( I THINK that's a bug)
+}
+
 void Mouse::OnLeftPressed(int x, int y) noexcept
 {
 	leftIsPressed = true;
@@ -136,9 +169,17 @@ void Mouse::OnWheelDown(int x, int y) noexcept
 
 void Mouse::TrimBuffer() noexcept
 {
-	while (buffer.size() > bufferSize)
+	while (buffer.size() > bufferSize) //buffer size is static constexpr = 16
 	{
 		buffer.pop();
+	}
+}
+
+void Mouse::TrimRawInputBuffer() noexcept
+{
+	while (rawDeltaBuffer.size() > bufferSize)
+	{
+		rawDeltaBuffer.pop(); 
 	}
 }
 

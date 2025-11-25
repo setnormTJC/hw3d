@@ -4,15 +4,19 @@
 class Camera
 {
 public: 
+	Camera() noexcept; 
 	DirectX::XMMATRIX GetMatrix() const noexcept; 
 	/*Creates an imgui controller for camera*/
 	void SpawnControlWindow() noexcept; 
-	void Reset() noexcept; 
+	void Reset() noexcept;
+
+	void Rotate(float dx, float dy) noexcept; 
+	void Translate(DirectX::XMFLOAT3 translation) noexcept; 
+
 private: 
-	float r = 20.0f; 
-	float theta = 0.0f; //equatorial rotation 
-	float phi = 0.0f; //polar rotation 
-	float pitch = 0.0f; //orientation 
-	float yaw = 0.0f; 
-	float roll = 0.0f; 
+	DirectX::XMFLOAT3 pos; //xyz
+	float pitch; 
+	float yaw; 
+	static constexpr float travelSpeed = 120.0f; //bumped up from 12 in Chili commit 
+	static constexpr float rotationSpeed = 0.004f; //bumped up from 0.004
 };
