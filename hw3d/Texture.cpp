@@ -4,7 +4,9 @@
 
 namespace Bind
 {
-	Texture::Texture(Graphics& gfx, const Surface& s)
+	Texture::Texture(Graphics& gfx, const Surface& s, unsigned int slot)
+		:
+		slot(slot)
 	{
 		INFOMAN(gfx);
 
@@ -13,7 +15,7 @@ namespace Bind
 		textureDesc.Width = s.GetWidth();
 		textureDesc.Height = s.GetHeight();
 		textureDesc.MipLevels = 1;
-		textureDesc.ArraySize = 1;
+		textureDesc.ArraySize = 1; //interesting ...
 		textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM; //bgr not rgb...
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0; //no antialiasing
@@ -49,6 +51,6 @@ namespace Bind
 
 	void Texture::Bind(Graphics& gfx) noexcept
 	{
-		GetContext(gfx)->PSSetShaderResources(0u, 1u, pTextureView.GetAddressOf());
+		GetContext(gfx)->PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf()); //changed here!
 	}
 }

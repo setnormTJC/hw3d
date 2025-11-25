@@ -1,6 +1,8 @@
 #include "Mesh.h"
 
 #include"imgui/imgui.h"
+#include"Surface.h"
+
 #include <sstream>
 #include<unordered_map>
 
@@ -74,7 +76,7 @@ DirectX::XMMATRIX Mesh::GetTransformXM() const noexcept
 Node::Node(int id, const std::string& name, std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform_in) noexcept(!IS_DEBUG)
 	:
 	id(id),
-	meshPtrs(std::move(meshPtrs)), 
+	meshPtrs(std::move(meshPtrs)),
 	name(name)
 {
 
@@ -85,7 +87,7 @@ Node::Node(int id, const std::string& name, std::vector<Mesh*> meshPtrs, const D
 void Node::Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept(!IS_DEBUG)
 {
 	const auto built = DirectX::XMLoadFloat4x4(&appliedTransform) *
-		DirectX::XMLoadFloat4x4(&transform) * 
+		DirectX::XMLoadFloat4x4(&transform) *
 		accumulatedTransform;
 
 	for (const auto pm : meshPtrs) //pointer to mesh (pm)
@@ -100,7 +102,7 @@ void Node::Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const no
 
 void Node::SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept
 {
-	DirectX::XMStoreFloat4x4(&appliedTransform, transform); 
+	DirectX::XMStoreFloat4x4(&appliedTransform, transform);
 }
 
 int Node::GetId() const noexcept
@@ -108,14 +110,14 @@ int Node::GetId() const noexcept
 	return id;
 }
 
-void Node::ShowTree(  Node*& pSelectedNode) const noexcept
+void Node::ShowTree(Node*& pSelectedNode) const noexcept
 {
 
-	const auto selectedId = (pSelectedNode == nullptr) ? -1 : pSelectedNode->GetId(); 
+	const auto selectedId = (pSelectedNode == nullptr) ? -1 : pSelectedNode->GetId();
 
 	const auto node_flags = ImGuiTreeNodeFlags_OpenOnArrow
 		| ((GetId() == selectedId ? ImGuiTreeNodeFlags_Selected : 0)
-		| ((childPtrs.size() == 0) ? ImGuiTreeNodeFlags_Leaf : 0));
+			| ((childPtrs.size() == 0) ? ImGuiTreeNodeFlags_Leaf : 0));
 
 	const auto expanded = ImGui::TreeNodeEx(
 		(void*)(intptr_t)GetId(), node_flags, name.c_str());
@@ -123,19 +125,19 @@ void Node::ShowTree(  Node*& pSelectedNode) const noexcept
 
 	if (ImGui::IsItemClicked())
 	{
-		pSelectedNode = const_cast<Node*>(this); 
+		pSelectedNode = const_cast<Node*>(this);
 	}
 
 	if (expanded)
 	{
 		for (const auto& pChild : childPtrs)
 		{
-			pChild->ShowTree(pSelectedNode); 
+			pChild->ShowTree(pSelectedNode);
 		}
-	
+
 		ImGui::TreePop(); //pop the function call stack, mayhap
 	}
-	
+
 }
 
 void Node::AddChild(std::unique_ptr<Node> pChild) noexcept(!IS_DEBUG)
@@ -157,7 +159,7 @@ public:
 	{
 		windowName = windowName ? windowName : "Model";
 
-		int nodeIndexTracker = 0; 
+		int nodeIndexTracker = 0;
 
 		if (ImGui::Begin(windowName))
 		{
@@ -184,7 +186,7 @@ public:
 		}
 		ImGui::End();
 	}
-	
+
 	Node* GetSelectedNode() const noexcept
 	{
 		return pSelectedNode;
@@ -199,8 +201,8 @@ public:
 
 
 private:
-	
-	Node* pSelectedNode; 
+
+	Node* pSelectedNode;
 
 	struct TransformParameters
 	{
@@ -210,9 +212,9 @@ private:
 		float x = 0.0f;
 		float y = 0.0f;
 		float z = 0.0f;
-	}; 
+	};
 	/*Maps indices to transform parameter structs*/
-	std::unordered_map<int, TransformParameters> transforms; 
+	std::unordered_map<int, TransformParameters> transforms;
 };
 #pragma endregion
 
@@ -236,7 +238,7 @@ Model::Model(Graphics& gfx, const std::string filename)
 
 	for (size_t i = 0; i < pScene->mNumMeshes; ++i)
 	{
-		meshPtrs.push_back(ParseMesh(gfx, *pScene->mMeshes[i]));
+		meshPtrs.push_back(ParseMesh(gfx, *pScene->mMeshes[i], pScene->mMaterials));
 	}
 
 	int nextId = 0;
@@ -263,8 +265,9 @@ Model::~Model() noexcept
 }
 
 
-std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh)
+std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh, const aiMaterial* const* pMaterials)
 {
+
 	namespace dx = DirectX;
 	using Dvtx::VertexLayout; //Vertex.h gets involved 
 
@@ -272,13 +275,15 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh)
 		VertexLayout{}
 		.Append(VertexLayout::Position3D)
 		.Append(VertexLayout::Normal)
+		.Append(VertexLayout::Texture2D)
 	));
 
 	for (unsigned int i = 0; i < mesh.mNumVertices; i++)
 	{
 		vbuf.EmplaceBack(
 			*reinterpret_cast<dx::XMFLOAT3*>(&mesh.mVertices[i]), //NOTE: mVertices means POSITIONS (bad assimp)
-			*reinterpret_cast<dx::XMFLOAT3*>(&mesh.mNormals[i])
+			*reinterpret_cast<dx::XMFLOAT3*>(&mesh.mNormals[i]),
+			*reinterpret_cast<dx::XMFLOAT2*>(&mesh.mTextureCoords[0][i]) //new layout param
 		);
 	}
 
@@ -293,7 +298,38 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh)
 		indices.push_back(face.mIndices[2]);
 	}
 
-	std::vector<std::unique_ptr<Bind::Bindable>> bindablePtrs; 
+	std::vector<std::unique_ptr<Bind::Bindable>> bindablePtrs;
+
+	bool hasSpecularMap = false; 
+	float shininess = 35.0f; 
+
+	if (mesh.mMaterialIndex >= 0)
+	{
+		using namespace std::string_literals;
+		const auto base = "Models\\nano_textured\\"s;
+
+		auto& material = *pMaterials[mesh.mMaterialIndex];
+
+		aiString texFileName;
+
+		/*load the diffuse (should always be present, I think )*/
+		material.GetTexture(aiTextureType_DIFFUSE, 0, &texFileName);
+		bindablePtrs.push_back(std::make_unique<Bind::Texture>(gfx, Surface::FromFile(base + texFileName.C_Str())));
+		
+		//CHECK for specular (and set a flag, if present) - might not be present
+		if (material.GetTexture(aiTextureType_SPECULAR, 0, &texFileName) == aiReturn_SUCCESS) 
+		{
+			bindablePtrs.push_back(std::make_unique<Bind::Texture>(gfx, Surface::FromFile(base + texFileName.C_Str()), 1)); 
+			hasSpecularMap = true; 
+		}
+
+		else
+		{
+			material.Get(AI_MATKEY_SHININESS, shininess); //updates shininess param (I think) 
+		}
+
+		bindablePtrs.push_back(std::make_unique<Bind::Sampler>(gfx));
+	}
 
 	bindablePtrs.push_back(std::make_unique<Bind::VertexBuffer>(gfx, vbuf));
 
@@ -303,19 +339,28 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh)
 	auto pvsbc = pvs->GetBytecode();
 	bindablePtrs.push_back(std::move(pvs));
 
-	bindablePtrs.push_back(std::make_unique<Bind::PixelShader>(gfx, L"../x64/Debug/PhongPS.cso"));
-
 	bindablePtrs.push_back(std::make_unique<Bind::InputLayout>(gfx, vbuf.GetLayout().GetD3DLayout(), pvsbc));
-
-	struct PSMaterialConstant
+	
+	if (hasSpecularMap)
 	{
-		DirectX::XMFLOAT3 color = { 1.0f,1.0f,1.0f }; //later, we will load this from .obj (a model file) 
+		bindablePtrs.push_back(std::make_unique<Bind::PixelShader>(gfx, L"../x64/Debug/PhongPSSpecMap.cso"));
+	}
+
+	else
+	{
+		bindablePtrs.push_back(std::make_unique<Bind::PixelShader>(gfx, L"../x64/Debug/PhongPS.cso"));
+
+		struct PSMaterialConstant
+		{
+			//DirectX::XMFLOAT3 color = { 1.0f,1.0f,1.0f }; //later, we will load this from .obj (a model file) 
 		
-		float specularIntensity = 0.6f;
-		float specularPower = 30.0f;
-		float padding[3];
-	} pmc;
-	bindablePtrs.push_back(std::make_unique<Bind::PixelConstantBuffer<PSMaterialConstant>>(gfx, pmc, 1u));
+			float specularIntensity = 0.8f;
+			float specularPower;
+			float padding[2];
+		} pmc;
+		pmc.specularPower = shininess; //shininess was set to 35.0f above and POSSIBLY read in from file
+		bindablePtrs.push_back(std::make_unique<Bind::PixelConstantBuffer<PSMaterialConstant>>(gfx, pmc, 1u));
+	}
 
 	return std::make_unique<Mesh>(gfx, std::move(bindablePtrs));
 }

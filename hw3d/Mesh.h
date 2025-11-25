@@ -84,7 +84,7 @@ private:
 	4) pixel shader
 	5) input layout
 	6)*/
-	static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, const aiMesh& mesh);
+	static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, const aiMesh& mesh, const aiMaterial* const* pMaterials);
 
 	std::unique_ptr<Node> ParseNode(int& nextId, const aiNode& node);
 
